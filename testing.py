@@ -82,7 +82,7 @@ def model_move(game):
     
 
 dirname = os.path.dirname(__file__)
-file_path = os.path.join(dirname, "Q_Tables/table10.pkl")
+file_path = os.path.join(dirname, "Q_Tables/table13.pkl")
 
 with open(file_path, 'rb') as file:
     q_table = pickle.load(file)
@@ -101,8 +101,8 @@ food_color = Color(171, 70, 66)
 start_pos = (4, 4)
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 4])] + [np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-#snake = np.array([np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+snake = np.array([np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
 
 #start_pos = (4, 1)
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] +1 ])] + [np.array([start_pos[0] - 4, start_pos[1]])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])

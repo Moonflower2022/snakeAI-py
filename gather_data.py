@@ -58,18 +58,29 @@ def generate_random_snake(snake_length, grid_length):
 
     return np.array(snake)
 
+def update_q_table(game, win_reward, lose_penalty):
+    value = win_reward if game.won else lose_penalty
+    
+    for i in range(1, game.states + 1):
+        if not game.state_history[-i] in q_table:
+            q_table[game.state_history[-i]] = {}
+        if game.action_history[-i] in q_table[game.state_history[-i]]:
+            q_table[game.state_history[-i]][game.action_history[-i]] = (1 - learning_rate) * q_table[game.state_history[-i]][game.action_history[-i]] + learning_rate * value
+        else: 
+            q_table[game.state_history[-i]][game.action_history[-i]] = value
+        value = decay_function(value)
 
 # settings
-snake_length = 7
+starting_length = 4
 board_length = 4
 use_distance = False
 win_reward = 6
-lose_penalty = -3
+lose_penalty = -1
 learning_rate = 0.3 # 0 < _ <= 1
 score_threshold = 3 # how many fruits to end the game
 
 dirname = os.path.dirname(__file__)
-file_path = os.path.join(dirname, "Q_Tables/table12.pkl")
+file_path = os.path.join(dirname, "Q_Tables/table13.pkl")
 first = False
 
 if first:
@@ -81,27 +92,14 @@ else:
 
 velocity = random.choice([np.array((1, 0)), np.array((-1, 0)), np.array((0, -1)), np.array((0, 1))])
 
-for i in range(100000):
-    snake = generate_random_snake(snake_length, board_length)
+for i in range(10000):
+    snake = generate_random_snake(starting_length, board_length)
     game = Game(q_table_gathering_data, board_length, snake, velocity, q_table, score_threshold)
 
     while game.update():
         pass
     
-    if game.won:
-        value = game.distance if use_distance else win_reward
-    else: 
-        value = lose_penalty
-
-    for i in range(game.states):
-        index = game.states - i - 1
-        if not game.state_history[index] in q_table:
-            q_table[game.state_history[index]] = {}
-        if game.action_history[index] in q_table[game.state_history[index]]:
-            q_table[game.state_history[index]][game.action_history[index]] = (1 - learning_rate) * q_table[game.state_history[index]][game.action_history[index]] + learning_rate * value
-        else: 
-            q_table[game.state_history[index]][game.action_history[index]] = value
-        value = decay_function(value)
+    update_q_table(game, win_reward, lose_penalty)
 
 print(f"len: {len(q_table)}")
 

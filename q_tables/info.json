@@ -152,5 +152,19 @@
         "game type": "simplified: getting fruit doesnt give extra segments",
         "other training info": "every iteration it starts from a random position, training session ends when dies or gets fruit",
         "other notes": "good but sometimes dies in dead ends"
+    },
+    "table13": {
+        "board size": 4,
+        "snake length": 4, 
+        "training_function": "if not in table: random move; if we have any positive, do a random pos one; else do a random move that isnt the negatives if they exist",
+        "# of items": 6160,
+        "% of positive values": 42.84,
+        "win reward": 6,
+        "lose penalty": -1,
+        "learning rate": 0.3,
+        "decay function": "x => max(x - 1) if x > 0, min(x + 1) if x < 0, 0 if x = 0",
+        "game type": "simplified: getting fruit doesnt give extra segments",
+        "other training info": "every iteration it starts from a random position, it has to get two fruits to win",
+        "other notes": "for testing new changes"
     }
 }
