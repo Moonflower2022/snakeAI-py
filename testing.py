@@ -99,10 +99,10 @@ head_color = Color(102, 204, 0)
 food_color = Color(171, 70, 66)
 
 start_pos = (4, 4)
-#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 4])] + [np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 4])] + [np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-snake = np.array([np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+#snake = np.array([np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
 
 #start_pos = (4, 1)
 #snake = np.array([np.array([start_pos[0] - 4, start_pos[1] +1 ])] + [np.array([start_pos[0] - 4, start_pos[1]])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])

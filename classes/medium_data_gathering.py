@@ -8,10 +8,8 @@ def hash_state(snake, fruit):
     return (hash_2d(snake), tuple(fruit))
 
 class Game:
-    def __init__(self, move_function, board_length, starting_snake, starting_velocity, q_table, score_threshold):
-        # snake starts left from start_pos so start_pos[0] cant be less than snake_length
+    def __init__(self, move_function, board_length, starting_snake, starting_velocity, q_table):
         # move_function should take the game object and return a velocity in np.array ex: np.array([1, 0])
-        self.score_threshold = score_threshold
         self.move_function = move_function
         self.q_table = q_table
         self.board_length = board_length
@@ -25,6 +23,7 @@ class Game:
         self.state_history = [hash_state(self.snake, self.fruit)]
         self.action_history = [tuple(self.velocity)]
         self.states = 1
+        self.one_fruit_index = None
 
     def move(self):
         new_position = self.snake[-1] + self.velocity
@@ -35,12 +34,13 @@ class Game:
             self.snake = np.append(self.snake, [new_position], axis=0)
             if np.array_equal(new_position, self.fruit):
                 self.score += 1
-                if self.score == self.score_threshold:
+                if self.score == 1:
+                    self.one_fruit_index = self.states
+                else: # self.score == 2
                     self.won = True
                     self.game_over = True
                 return
             self.snake = np.delete(self.snake, 0, axis=0)
-
 
     def update(self):
         self.move()

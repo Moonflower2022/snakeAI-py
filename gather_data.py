@@ -1,5 +1,5 @@
 import numpy as np
-from classes.simplified_data_gathering import Game
+from classes.medium_data_gathering import Game
 import pickle
 import os
 import random
@@ -58,26 +58,36 @@ def generate_random_snake(snake_length, grid_length):
 
     return np.array(snake)
 
-def update_q_table(game, win_reward, lose_penalty):
+def update_q_table_split(game, win_reward, lose_penalty, is_first_half):
     value = win_reward if game.won else lose_penalty
+
+    first_fruit_index = game.one_fruit_index + 1
+
+    if is_first_half:
+        state_history = game.state_history[:first_fruit_index]
+        action_history = game.action_history[:first_fruit_index]
+    else:
+        state_history = game.state_history[first_fruit_index:]
+        action_history = game.action_history[first_fruit_index:]
     
-    for i in range(1, game.states + 1):
-        if not game.state_history[-i] in q_table:
-            q_table[game.state_history[-i]] = {}
-        if game.action_history[-i] in q_table[game.state_history[-i]]:
-            q_table[game.state_history[-i]][game.action_history[-i]] = (1 - learning_rate) * q_table[game.state_history[-i]][game.action_history[-i]] + learning_rate * value
+    #assert len(state_history) == len(action_history)
+    
+    for i in range(len(state_history)):
+        if not state_history[-i - 1] in q_table:
+            q_table[state_history[-i - 1]] = {}
+        if action_history[-i - 1] in q_table[state_history[-i - 1]]:
+            q_table[state_history[-i - 1]][action_history[-i - 1]] = (1 - learning_rate) * q_table[state_history[-i - 1]][action_history[-i - 1]] + learning_rate * value
         else: 
-            q_table[game.state_history[-i]][game.action_history[-i]] = value
+            q_table[state_history[-i - 1]][action_history[-i - 1]] = value
         value = decay_function(value)
 
 # settings
-starting_length = 4
+starting_length = 6
 board_length = 4
 use_distance = False
-win_reward = 6
-lose_penalty = -1
+win_reward = 9
+lose_penalty = -3
 learning_rate = 0.3 # 0 < _ <= 1
-score_threshold = 3 # how many fruits to end the game
 
 dirname = os.path.dirname(__file__)
 file_path = os.path.join(dirname, "Q_Tables/table13.pkl")
@@ -92,42 +102,22 @@ else:
 
 velocity = random.choice([np.array((1, 0)), np.array((-1, 0)), np.array((0, -1)), np.array((0, 1))])
 
-for i in range(10000):
+for i in range(100000):
     snake = generate_random_snake(starting_length, board_length)
-    game = Game(q_table_gathering_data, board_length, snake, velocity, q_table, score_threshold)
+    game = Game(q_table_gathering_data, board_length, snake, velocity, q_table)
 
     while game.update():
         pass
     
-    update_q_table(game, win_reward, lose_penalty)
+    if game.won:
+        update_q_table_split(game, win_reward, lose_penalty, True)
+        update_q_table_split(game, win_reward, lose_penalty, False)
+    else:
+        update_q_table(game, win_reward, lose_penalty)
 
 print(f"len: {len(q_table)}")
 
 print(calculate_positive_percentage(q_table))
-'''
-# Create a new dictionary from the shuffled items
-items_list = list(q_table.items())
 
-# Shuffle the list
-random.shuffle(items_list)
-
-# Create a new dictionary from the shuffled list
-shuffled_dict = dict(items_list)
-
-# Set the limit for the number of values to print
-limit = 10
-
-# Counter to keep track of the number of values printed
-count = 0
-
-# Iterate through the dictionary items and print values up to the limit
-for key, value in q_table.items():
-    print(f'{key}: {value}')
-    count += 1
-
-    # Check if the limit is reached
-    if count == limit:
-        break
-'''
 with open(file_path, 'wb') as file:
     pickle.dump(q_table, file)

@@ -155,16 +155,30 @@
     },
     "table13": {
         "board size": 4,
-        "snake length": 4, 
+        "snake length": 7, 
         "training_function": "if not in table: random move; if we have any positive, do a random pos one; else do a random move that isnt the negatives if they exist",
-        "# of items": 6160,
-        "% of positive values": 42.84,
-        "win reward": 6,
-        "lose penalty": -1,
+        "# of items": "like 16000?",
+        "% of positive values": "???",
+        "win reward": 9,
+        "lose penalty": -3,
         "learning rate": 0.3,
         "decay function": "x => max(x - 1) if x > 0, min(x + 1) if x < 0, 0 if x = 0",
         "game type": "simplified: getting fruit doesnt give extra segments",
-        "other training info": "every iteration it starts from a random position, it has to get two fruits to win",
-        "other notes": "for testing new changes"
+        "other training info": "every iteration it starts from a random position",
+        "other notes": "for testing new changes, decent but dies in dead ends"
+    },
+    "table14": {
+        "board size": 4,
+        "snake length": "6 -> 7", 
+        "training_function": "if not in table: random move; if we have any positive, do a random pos one; else do a random move that isnt the negatives if they exist",
+        "# of items": "???",
+        "% of positive values": "???",
+        "win reward": 9,
+        "lose penalty": -3,
+        "learning rate": 0.3,
+        "decay function": "x => max(x - 1) if x > 0, min(x + 1) if x < 0, 0 if x = 0",
+        "game type": "base game: getting fruit gives extra segments",
+        "other training info": "every iteration it starts from a random position, ends when it gets two fruits",
+        "other notes": ""
     }
 }
