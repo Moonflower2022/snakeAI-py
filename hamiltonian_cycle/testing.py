@@ -1,73 +1,8 @@
 from p5 import *
 import numpy as np
-import os
-import random
 from classes.game import Game
-
-def random_move_function(game):
-    magnitudes = [1, -1]
-    
-    options = [np.array([i, 0]) for i in magnitudes] + [np.array([0, i]) for i in magnitudes]
-
-    options = [option for option in options if not np.array_equal(option, -game.velocity)]
-    
-    return np.array(options[np.random.choice(len(options))])
-    
-def minimize_taxi(game):
-    def distance(tuple1, tuple2):
-        return abs(tuple1[0] - tuple2[0]) + abs(tuple1[1] - tuple2[1])
-            
-    magnitudes = [1, -1]
-    
-    options = [np.array([i, 0]) for i in magnitudes] + [np.array([0, i]) for i in magnitudes]
-
-    options = [option for option in options if not np.array_equal(option, -game.velocity)]
-
-    distances = [distance(game.snake[len(game.snake) - 1] + option, game.fruit) for option in options]
-
-    return options[np.argmin(distances)]
-
-def hamiltonian_cycle_from_point(grid, start_row, start_col):
-    def is_valid_move(grid, path, row, col):
-        # Check if the move is within the grid and the cell is not already visited
-        if (row >= 0 and row < len(grid[0])) and (col >= 0 and col < len(grid)):
-            if (row, col) not in path:
-                return True
-        return False
-    def dfs(grid, path, row, col):
-        path.append((row, col))
-
-        if len(path) == len(grid) * len(grid[0]):
-            # Check if the last cell is adjacent to the start cell
-            last_row, last_col = path[-1]
-            if abs(last_row - start_row) + abs(last_col - start_col) == 1:
-                return True
-        
-        # Possible moves
-        moves = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-        random.shuffle(moves)
-
-        for move in moves:
-            new_row = row + move[0]
-            new_col = col + move[1]
-            if is_valid_move(grid, path, new_row, new_col):
-                if dfs(grid, path, new_row, new_col):
-                    return True
-        
-        path.pop() # Backtrack
-        return False
-
-    # Start from the specified point and try to find a Hamiltonian cycle
-    path = []
-    if dfs(grid, path, start_row, start_col):
-        return path
-    raise Exception("Oopsie the rows and columns are both odd or smth idk but it no work sad fact :(")
-
-def grid_generator(width, height):
-    grid = []
-    for i in range(height):
-        grid.append(list(np.arange(width) + 1 + i*width))
-    return grid
+from cycle_finder import hamiltonian_cycle_from_point, grid_generator
+from cycle_finder2 import generate_hamiltonian_circuit
 
 def cycle_to_directions(cycle):
     directions = {}
@@ -81,8 +16,8 @@ def cycle_to_directions(cycle):
 def direction_move(game):
     return np.array(game.directions[tuple(game.snake[len(game.snake) - 1])])
 
-width = 6
-height = 5
+width = 20
+height = 3
 tile_size = 50
 background_color = Color(24)
 gameover_overlay_color = Color(88, 127)
@@ -91,25 +26,17 @@ snake_color = Color(161, 181, 108)
 head_color = Color(102, 204, 0)
 food_color = Color(171, 70, 66)
 
-start_pos = (4, 4)
-#7
-#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 4])] + [np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-#6
-#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 3])] + [np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-#5
-#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] - 2])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
-#4
-#snake = np.array([np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+square_size_factor = 0.8
 
-#1
-snake = np.array([np.array([0, 0])])
+snake = np.array([np.array([np.random.randint(0, width), np.random.randint(0, height)])])
 
-#start_pos = (4, 1)
-#snake = np.array([np.array([start_pos[0] - 4, start_pos[1] +1 ])] + [np.array([start_pos[0] - 4, start_pos[1]])] + [np.array([start_pos[0] + i - 4, start_pos[1] - 1]) for i in range(4)])
+#grid = grid_generator(width, height)
+#cycle = hamiltonian_cycle_from_point(grid, snake[0][1], snake[0][0])
 
-grid = grid_generator(width, height)
+q = 1
+n, cycle = generate_hamiltonian_circuit(q, width - 1, height - 1)
 
-cycle = hamiltonian_cycle_from_point(grid, snake[len(snake) - 1][1], snake[len(snake) - 1][0])
+print(cycle)
 
 directions = cycle_to_directions(cycle)
 
@@ -135,10 +62,10 @@ def draw_game(game):
     for i in range(len(game.snake)):
         if i == len(game.snake) - 1:
             fill(head_color)
-        square(Vector(game.snake[i][0], game.snake[i][1]) * int(tile_size), 0.8 * int(tile_size))
+        square(Vector(game.snake[i][0], game.snake[i][1]) * int(tile_size) + Vector((1 - square_size_factor) * tile_size / 2, (1 - square_size_factor) * tile_size / 2), square_size_factor * int(tile_size))
 
     fill(food_color)
-    square(Vector(game.fruit[0], game.fruit[1]) * int(tile_size), 0.8 * int(tile_size))
+    square(Vector(game.fruit[0], game.fruit[1]) * int(tile_size) + Vector((1 - square_size_factor) * tile_size / 2, (1 - square_size_factor) * tile_size / 2), square_size_factor * int(tile_size))
 
 
 def setup():
@@ -168,4 +95,4 @@ def draw():
     
 
 if __name__ == '__main__':
-    run(frame_rate=15)
+    run(frame_rate=60)
