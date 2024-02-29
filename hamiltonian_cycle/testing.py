@@ -1,6 +1,6 @@
 from p5 import *
 import numpy as np
-from classes.game import Game
+from game import Game
 from cycle_finder import hamiltonian_cycle_from_point, grid_generator
 from cycle_finder2 import generate_hamiltonian_circuit
 
@@ -16,8 +16,8 @@ def cycle_to_directions(cycle):
 def direction_move(game):
     return np.array(game.directions[tuple(game.snake[len(game.snake) - 1])])
 
-width = 20
-height = 3
+width = 10
+height = 10
 tile_size = 50
 background_color = Color(24)
 gameover_overlay_color = Color(88, 127)
