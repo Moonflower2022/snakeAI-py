@@ -15,7 +15,7 @@ class Game:
         self.won = False
         self.velocity = np.array([1, 0])
         self.velocity = move_function(self) # Initial velocity
-        self.move_function = move_function
+        self.move_function = move_function        
 
     def move(self):
         new_position = self.snake[-1] + self.velocity

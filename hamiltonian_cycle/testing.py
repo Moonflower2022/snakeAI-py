@@ -3,6 +3,7 @@ import numpy as np
 from game import Game
 from cycle_finder import hamiltonian_cycle_from_point, grid_generator
 from cycle_finder2 import generate_hamiltonian_circuit
+import random
 
 def cycle_to_directions(cycle):
     directions = {}
@@ -13,22 +14,73 @@ def cycle_to_directions(cycle):
         directions[current_point] = direction
     return directions
 
-def direction_move(game):
-    return np.array(game.directions[tuple(game.snake[len(game.snake) - 1])])
+def directions_move(game):
+    # only works for starting with only one segment
+    return np.array(game.directions[tuple(game.snake[len(game.snake)-1])])
 
-width = 10
-height = 10
+def directions_move_replacement(game, count=0):
+    # is kinda broken
+    if count > 100:
+        game.directions = None
+    if game.directions == None:
+        return np.array([0, 0])
+    new = game.snake[-1] + np.array(game.directions[tuple(game.snake[-1])])
+    if np.any([np.array_equal(new, segment) for segment in np.delete(game.snake, 0, axis=0)]) or new[0] < 0 or new[0] >= game.width or new[1] < 0 or new[1] >= game.height:
+        game.cycle = generate_hamiltonian_circuit(1, game.width - 1, game.height - 1)
+        game.directions = cycle_to_directions(cycle)
+        return directions_move_replacement(game, count + 1)
+    return np.array(game.directions[tuple(game.snake[-1])])
+
+def generate_random_snake(snake_length, width, height):
+    """
+    Generate a random snake of a given length on a grid.
+
+    Parameters:
+        length (int): The length of the snake.
+        grid_width (int): The width of the grid.
+        grid_height (int): The height of the grid.
+
+    Returns:
+        list: A list of coordinates representing the snake.
+    """
+    # Initialize the snake with a random starting position
+    snake = [(random.randint(0, width - 1), random.randint(0, height - 1))]
+    
+    # Generate the rest of the snake's body
+    while len(snake) < snake_length:
+        last_position = snake[-1]
+
+        options = [
+            np.array((last_position[0], last_position[1] - 1)), 
+            np.array((last_position[0], last_position[1] + 1)), 
+            np.array((last_position[0] - 1, last_position[1])), 
+            np.array((last_position[0] + 1, last_position[1]))
+        ]
+
+        viable_options = [option for option in options if not any(np.array_equal(snake_segment, option) for snake_segment in snake) and 0 <= option[0] < width and 0 <= option[1] < height]
+
+        if len(viable_options) == 0:
+            return generate_random_snake(snake_length, width, height)
+        snake.append(random.choice(viable_options))
+
+    return np.array(snake)
+
+framerate = 30
+snake_length = 1
+width = 5
+height = 6
 tile_size = 50
+
 background_color = Color(24)
 gameover_overlay_color = Color(88, 127)
-
 snake_color = Color(161, 181, 108)
 head_color = Color(102, 204, 0)
 food_color = Color(171, 70, 66)
 
 square_size_factor = 0.8
 
-snake = np.array([np.array([np.random.randint(0, width), np.random.randint(0, height)])])
+#snake = np.array([np.array([np.random.randint(0, width), np.random.randint(0, height)])])
+snake = generate_random_snake(snake_length, width, height)
 
 #grid = grid_generator(width, height)
 #cycle = hamiltonian_cycle_from_point(grid, snake[0][1], snake[0][0])
@@ -40,7 +92,7 @@ print(cycle)
 
 directions = cycle_to_directions(cycle)
 
-game = Game(direction_move, width, height, snake, cycle, directions)
+game = Game(directions_move, width, height, snake, cycle, directions)
 
 def draw_game(game):
     if game.game_over:
@@ -95,4 +147,4 @@ def draw():
     
 
 if __name__ == '__main__':
-    run(frame_rate=60)
+    run(frame_rate=framerate)
