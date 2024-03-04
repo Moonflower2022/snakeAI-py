@@ -1,4 +1,4 @@
-from snake_env import SnakeEnv
+from snake_env_3action import SnakeEnv
 import time
 '''
 env = SnakeEnv(render_mode='human', display_width=400, display_height=400,

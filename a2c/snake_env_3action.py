@@ -45,14 +45,7 @@ class SnakeEnv(Env):
 
         # env variables
 
-        self.action_space = Discrete(4) 
-        # up down left right
-        self.action_map = {
-            0: np.array([0, -1]),
-            1: np.array([0, 1]),
-            2: np.array([-1, 0]),
-            3: np.array([1, 0]),
-        }
+        self.action_space = Discrete(3) # turn counter clock wise, do nothing, turn clock wies
         self.observation_space = Box(low=0, high=3, shape=(width, height), dtype=np.int32)
         # 0: empty space, 1: snake body, 2: snake head, 3: fruit
 
@@ -128,7 +121,13 @@ class SnakeEnv(Env):
     
     def step(self, action):
         # step(action) -> ObseravtionType, Float, Bool, Bool
-        new = self.snake[-1] + self.action_map[action]
+        direction = self.snake[-1] - self.snake[-2]
+        action_map = {
+            0: np.array([-direction[1], direction[0]]),
+            1: direction,
+            2: np.array([direction[1], -direction[0]]),
+        }
+        new = self.snake[-1] + action_map[action]
 
         if self.collision(self.snake, new):
             return self.state_to_grid(), -1, True, False, {'snake': self.snake}
@@ -163,6 +162,7 @@ class SnakeEnv(Env):
             if event.type == pygame.QUIT:
                 self.running = False
                 self.close()
+                return
         self.screen.fill("black")
 
         grid = self.state_to_grid()
@@ -178,9 +178,3 @@ class SnakeEnv(Env):
         self.clock.tick(self.FPS)
     def close(self):
         pygame.quit()
-
-
-
-test_env = SnakeEnv(render_mode='human', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
-
-obs, rewards, terminated, truncated, info = test_env.step(3)
