@@ -132,19 +132,19 @@ class SnakeEnv(Env):
         new = self.snake[-1] + self.action_map[action]
 
         if self.collision(self.snake, new):
-            return self.state_to_grid(), -1, True, False, {'snake': self.snake}
+            return self.state_to_grid(), -10, True, False, {'snake': self.snake}
         
         self.snake = np.append(self.snake, [new], axis=0)
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self.state_to_grid(), 100, True, False, {'snake': self.snake}
+                return self.state_to_grid(), 10, True, False, {'snake': self.snake}
             self.fruit = self.generate_fruit()
-            return self.state_to_grid(), 1, False, False, {'snake': self.snake}
+            return self.state_to_grid(), 10, False, False, {'snake': self.snake}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self.state_to_grid(), 0, False, False, {'snake': self.snake}
+        return self.state_to_grid(), -0.00001, False, False, {'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:

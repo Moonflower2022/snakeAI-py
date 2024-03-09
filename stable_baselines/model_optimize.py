@@ -1,6 +1,7 @@
 import optuna
 from snake_env_3action import SnakeEnv
 from stable_baselines3 import A2C
+from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 
@@ -13,10 +14,10 @@ def objective(trial):
     gamma = trial.suggest_uniform('gamma', 0.97, 0.99)
     
     # Create A2C model with sampled hyperparameters
-    model = A2C("MlpPolicy", vec_env, verbose=0, learning_rate=learning_rate, ent_coef=ent_coef, gamma=gamma, n_steps=5)
+    model = PPO("MlpPolicy", vec_env, verbose=0, learning_rate=learning_rate, ent_coef=ent_coef, gamma=gamma, n_steps=5)
     
     # Train the model
-    model.learn(total_timesteps=100000)
+    model.learn(total_timesteps=50000)
     
     # Evaluate the model
     mean_reward, _ = evaluate_policy(model, vec_env, n_eval_episodes=10)

@@ -1,4 +1,4 @@
-from snake_env_3action import SnakeEnv
+from snake_env_4action import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
 from stable_baselines3 import DQN
@@ -18,7 +18,7 @@ while True:
 
 
 '''
-model = PPO.load("a2c/models/a2c_snake6")
+model = PPO.load("stable_baselines/4x4models/?_ppo_4action_changed")
 
 test_env = SnakeEnv(render_mode='human', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
 
@@ -39,10 +39,10 @@ action_map2 = {
 }
 
 while test_env.running:
-    action, _states = model.predict(obs)
+    action, _states = model.predict(obs, deterministic=True)
     obs, rewards, terminated, truncated, info = test_env.step(int(action))
     if terminated:
-        print("won" if rewards == 100 else "died")
+        print("died" if rewards == -10 else "won")
     test_env.render()
     if terminated:
         obs, info = test_env.reset()

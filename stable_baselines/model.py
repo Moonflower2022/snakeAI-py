@@ -1,11 +1,11 @@
-from snake_env_3action import SnakeEnv
+from snake_env_4action import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
 
 # Parallel environments
-vec_env = SnakeEnv(render_mode='non', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
+vec_env = SnakeEnv(render_mode='non', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5) 
 
 # CnnPolicy
 
@@ -17,8 +17,8 @@ good_trials = [
 ]
 
 model = PPO("MlpPolicy", vec_env, verbose=1, gamma=0.98, ent_coef=0.01, learning_rate=0.0008895296207610578)
-model.learn(total_timesteps=2000000)
-model.save("a2c/models/a2c_snake6")
+model.learn(total_timesteps=4000000)
+model.save("stable_baselines/4x4models/?_ppo_4action_changed")
 
 '''
 del model # remove to demonstrate saving and loading

@@ -1,0 +1,22 @@
+{
+    "model1": {
+        "board_size": "4x4",
+        "env": "4action",
+        "rewards": "-10 for dying, 10 for getting fruit, -0.00001 if neither",
+        "gamma": "0.98",
+        "ent_coef": "0.02",
+        "learning_rate": "0.0008895296207610578",
+        "strength": "strong",
+        "notes": "dies randomly sometimes"
+    }, 
+    "model2": {
+        "board_size": "4x4",
+        "env": "4action",
+        "rewards": "-160 for dying, 10 for getting fruit, -0.00001 if neither",
+        "gamma": "0.8",
+        "ent_coef": "0.01",
+        "learning_rate": "0.0008895296207610578",
+        "strength": "strong",
+        "notes": "dies randomly sometimes"
+    }
+}
