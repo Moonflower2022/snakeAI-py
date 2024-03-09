@@ -1,20 +1,30 @@
 {
-    "model1": {
+    "ppo4_1": {
         "board_size": "4x4",
         "env": "4action",
-        "rewards": "-10 for dying, 10 for getting fruit, -0.00001 if neither",
+        "rewards": "-1 for dying, 1 for getting fruit, 100 for winning",
         "gamma": "0.98",
         "ent_coef": "0.02",
         "learning_rate": "0.0008895296207610578",
         "strength": "strong",
         "notes": "dies randomly sometimes"
     }, 
-    "model2": {
+    "ppo3_1": {
+        "board_size": "4x4",
+        "env": "3action",
+        "rewards": "-1 for dying, 1 for getting fruit, 100 for winning",
+        "gamma": "0.8",
+        "ent_coef": "0.01",
+        "learning_rate": "0.0008895296207610578",
+        "strength": "strong",
+        "notes": "dies randomly sometimes"
+    },
+    "ppo4_2": {
         "board_size": "4x4",
         "env": "4action",
         "rewards": "-160 for dying, 10 for getting fruit, -0.00001 if neither",
-        "gamma": "0.8",
-        "ent_coef": "0.01",
+        "gamma": "0.98",
+        "ent_coef": "0.02",
         "learning_rate": "0.0008895296207610578",
         "strength": "strong",
         "notes": "dies randomly sometimes"

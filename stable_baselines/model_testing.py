@@ -18,7 +18,8 @@ while True:
 
 
 '''
-model = PPO.load("stable_baselines/4x4models/?_ppo_4action_changed")
+# model = PPO.load("stable_baselines/4x4models/strong_ppo_4action")
+model = PPO.load("stable_baselines/a2c_snake3")
 
 test_env = SnakeEnv(render_mode='human', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
 
