@@ -1,5 +1,5 @@
 import optuna
-from snake_env_3action import SnakeEnv
+from snakes.snake_3_base import SnakeEnv
 from stable_baselines3 import A2C
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env

@@ -10,38 +10,51 @@ import pygame
 # 100 for winning
 
 class SnakeEnv(Env):
-    def __init__(self, render_mode='rgb_array', width=4, height=4, snake_length=4, display_width=400, display_height=400, body_color=(161, 181, 108), head_color=(102, 204, 0), fruit_color=(171, 70, 66), square_size_factor=0.8, FPS=30, random_seed=None) -> None:
-        assert display_width/width == display_height/height
+    render_modes = ['human', 'rgb_array']
+    display_width = 800
+    display_height = 800
+
+    reward_unit = 0.1
+    max_reward_abs = 100 * reward_unit
+    body_color = (161, 181, 108)
+    head_color = (102, 204, 0)
+    fruit_color = (171, 70, 66)
+    square_size_factor=0.8
+    FPS=5
+
+    colors = {
+        1: pygame.Color(*body_color),
+        2: pygame.Color(*head_color),
+        3: pygame.Color(*fruit_color)
+    }
+
+    def __init__(self, render_mode='human', width=4, height=4, snake_length=4, random_seed=None) -> None:
         assert snake_length > 0
         assert width > 0
         assert height > 0
         assert width * height > snake_length
+        assert render_mode in self.render_modes
 
-        self.display_width = display_width
-        self.display_height = display_height
         self.random_seed = random_seed
+
         if render_mode == 'human':
             pygame.init()
             pygame.display.set_caption('Snake Display')
-            self.screen = pygame.display.set_mode((display_width, display_height))
+            self.screen = None
             self.clock = pygame.time.Clock()
-            self.running = True
-        self.colors = {
-            1: pygame.Color(*body_color),
-            2: pygame.Color(*head_color),
-            3: pygame.Color(*fruit_color)
-        }
-        self.square_size_factor = square_size_factor
+            self.quit = False
+        
         self.render_mode = render_mode
-        self.FPS = FPS
 
         # game variables
 
         self.width = width
         self.height = height
         self.snake_length = snake_length
-        self.snake = self.generate_snake(width, height, snake_length) # last index is head
-        self.fruit = self.generate_fruit()
+        self.snake = None
+        self.fruit = None
+        self.over = False
+        self.steps = self.num_food = self.last_meal = 0
 
         # env variables
 
@@ -57,7 +70,7 @@ class SnakeEnv(Env):
         self.observation_space = Box(low=0, high=3, shape=(width, height), dtype=np.int32)
         # 0: empty space, 1: snake body, 2: snake head, 3: fruit
 
-    def generate_snake(self, width, height, snake_length): 
+    def _generate_snake(self, width, height, snake_length): 
         """
         Generate a random snake of a given length on a grid.
 
@@ -85,7 +98,7 @@ class SnakeEnv(Env):
                 np.array((last_position[0] + 1, last_position[1]))
             ]
 
-            viable_options = [option for option in options if not self.collision(snake, option)]
+            viable_options = [option for option in options if not self._collision(snake, option)]
 
             if len(viable_options) == 0:
                 return self.generate_snake(snake_length, width, height)
@@ -95,7 +108,7 @@ class SnakeEnv(Env):
 
         return np.array(snake)
     
-    def generate_fruit(self):
+    def _generate_fruit(self):
         empty_spaces = [cell for cell in np.argwhere(np.zeros([self.width, self.height]) == 0) if not any(np.array_equal(cell, arr) for arr in self.snake)]
         if not empty_spaces:
             return False
@@ -103,7 +116,7 @@ class SnakeEnv(Env):
             random.seed(self.random_seed)
         return random.choice(empty_spaces)
     
-    def state_to_grid(self):
+    def _get_state(self):
         '''
         Parameters:
             snake (np.array, shape: (l, 2)): 2d positions (x, y) where x, y in Z, x in [0, width-1], y in [0, height-1]
@@ -122,7 +135,7 @@ class SnakeEnv(Env):
 
         return grid
     
-    def collision(self, snake, new):
+    def _collision(self, snake, new):
         if np.any([np.array_equal(new, segment) for segment in np.delete(snake, 0, axis=0)]) or 0 > new[0] or new[0] >= self.width or 0 > new[1] or new[1] >= self.height:
             return True
         return False    
@@ -131,58 +144,62 @@ class SnakeEnv(Env):
         # step(action) -> ObseravtionType, Float, Bool, Bool
         new = self.snake[-1] + self.action_map[action]
 
-        if self.collision(self.snake, new):
-            return self.state_to_grid(), -10, True, False, {'snake': self.snake}
+        if self._collision(self.snake, new):
+            return self._get_state(), -10, True, False, {'snake': self.snake}
         
         self.snake = np.append(self.snake, [new], axis=0)
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self.state_to_grid(), 10, True, False, {'snake': self.snake}
-            self.fruit = self.generate_fruit()
-            return self.state_to_grid(), 10, False, False, {'snake': self.snake}
+                return self._get_state(), 10, True, False, {'snake': self.snake}
+            self.fruit = self._generate_fruit()
+            return self._get_state(), 10, False, False, {'snake': self.snake}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self.state_to_grid(), -0.00001, False, False, {'snake': self.snake}
+        return self._get_state(), -0.00001, False, False, {'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:
             self.random_seed = seed
-        self.snake = self.generate_snake(self.width, self.height, self.snake_length) # last index is head
-        self.fruit = self.generate_fruit()
+        self.over = False
+        self.quit = False
+        self.steps = self.num_food = self.last_meal = 0
+
+        self.snake = self._generate_snake(self.width, self.height, self.snake_length) # last index is head
+        self.fruit = self._generate_fruit()
+
         if self.render_mode == 'human':
-            pygame.init()
-            pygame.display.set_caption('Snake Display')
-            self.display = pygame.display.set_mode((self.display_width, self.display_height))
             self.clock = pygame.time.Clock()
             self.render()
-        return self.state_to_grid(), {'snake': self.snake}
+
+        return self._get_state(), {'snake': self.snake}
     
     def render(self):
+        if not self.screen:
+            pygame.display.set_caption('Snake RL')
+            self.screen = pygame.display.set_mode((self.display_width, self.display_height))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
                 self.close()
-                return
+                self.quit = True
+                return 
+
         self.screen.fill("black")
 
-        grid = self.state_to_grid()
+        grid = self._get_state()
         factor_x = self.display_width/self.width
         factor_y = self.display_height/self.height
         assert factor_x == factor_y
+
         for y in range(len(grid)):
             for x in range(len(grid[y])):
                 if grid[y][x] != 0:
                     pygame.draw.rect(self.screen, self.colors[grid[y][x]], pygame.Rect((x + 0.5 * (1-self.square_size_factor)) * factor_x, (y + 0.5 * (1-self.square_size_factor)) * factor_y, factor_x*self.square_size_factor, factor_y*self.square_size_factor))
+        
         pygame.display.flip()
-        pygame.display.update()
         self.clock.tick(self.FPS)
+
     def close(self):
         pygame.quit()
-
-
-
-test_env = SnakeEnv(render_mode='human', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
-
-obs, rewards, terminated, truncated, info = test_env.step(3)
