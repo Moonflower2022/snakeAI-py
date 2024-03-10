@@ -8,7 +8,7 @@
         "ent_coef": 0.01,
         "learning_rate": 0.0008895296207610578,
         "strength": "not great",
-        "notes": ""
+        "notes": "was trained when the env had a bug"
     },
     "ppo4_2": {
         "board_size": "6x6",
@@ -18,7 +18,7 @@
         "gamma": 0.98,
         "ent_coef": 0.02,
         "learning_rate": 0.0008895296207610578,
-        "strength": "",
-        "notes": ""
+        "strength": "not great",
+        "notes": "was trained when the env had a bug"
     }
 }

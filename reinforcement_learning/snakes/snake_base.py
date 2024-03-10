@@ -4,7 +4,7 @@ import random
 import pygame
 
 class SnakeEnv(Env):
-    render_modes = ['human', 'rgb_array']
+    render_modes = ['human', 'not_human']
     display_width = 800
     display_height = 800
 

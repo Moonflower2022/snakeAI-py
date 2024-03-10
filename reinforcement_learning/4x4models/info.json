@@ -8,7 +8,7 @@
         "ent_coef": "0.02",
         "learning_rate": "0.0008895296207610578",
         "strength": "strong",
-        "notes": "dies randomly sometimes"
+        "notes": "dies randomly sometimes | was trained when the env had a bug"
     }, 
     "ppo3_1": {
         "board_size": "4x4",
@@ -19,7 +19,7 @@
         "ent_coef": 0.01,
         "learning_rate": 0.0008895296207610578,
         "strength": "strong",
-        "notes": "dies randomly sometimes"
+        "notes": "dies randomly sometimes | was trained when the env had a bug"
     },
     "ppo4_2": {
         "board_size": "4x4",
@@ -30,6 +30,6 @@
         "ent_coef": "0.02",
         "learning_rate": "0.0008895296207610578",
         "strength": "strong",
-        "notes": "dies randomly sometimes"
+        "notes": "dies randomly sometimes | was trained when the env had a bug"
     }
 }

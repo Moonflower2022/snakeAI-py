@@ -1,4 +1,4 @@
-from snakes.snake_4_base import SnakeEnv
+from snakes.snake_4 import Snake4
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
@@ -15,9 +15,9 @@ good_trials = [
 
 model_name = "ppo4_2"
 
-board_size = "6x6"
+board_size = "4x4"
 starting_length = 4
-env = "4action"
+env_type = "4action"
 rewards_description = "-10 for dying, 10 for getting fruit, -0.00001 if neither"
 gamma = 0.98
 ent_coef = 0.02
@@ -27,7 +27,7 @@ info = {
     f"{model_name}": {
         "board_size": f"{board_size}",
         "starting_length": starting_length,
-        "env": f"{env}",
+        "env": f"{env_type}",
         "rewards": f"{rewards_description}",
         "gamma": gamma,
         "ent_coef": ent_coef,
@@ -38,9 +38,9 @@ info = {
 }
 
 # Parallel environments
-vec_env = SnakeEnv(render_mode='non', display_width=400, display_height=400, width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length, FPS=5) 
+env = Snake4(render_mode='not_human', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
 
-model = PPO("MlpPolicy", vec_env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=4000000)
 model.save(f"stable_baselines/{board_size}models/{model_name}")
 
@@ -55,17 +55,3 @@ data.update(info)
 # Write the updated JSON back to the file
 with open(f'stable_baselines/{board_size}models/info.json', 'w') as file:
     json.dump(data, file, indent=4)
-
-
-'''
-del model # remove to demonstrate saving and loading
-
-model = PPO.load("a2c/a2c_snake")
-
-
-env = SnakeEnv(render_mode='non_human', display_width=400, display_height=400, width=4, height=4, snake_length=4, FPS=5)
-
-model = DQN("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=100000)
-model.save("a2c/a2c_snake")
-'''
