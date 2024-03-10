@@ -1,4 +1,4 @@
-from snakes.snake_4_base import SnakeEnv
+from snakes.snake_3_base import SnakeEnv
 import time
 '''
 env = SnakeEnv(render_mode='human', display_width=400, display_height=400,
@@ -19,6 +19,7 @@ env.close()
 env = SnakeEnv(render_mode='human', width=4, height=4, snake_length=4)
 
 env.reset()
+env.render()
 
 while not env.quit:
     action = env.action_space.sample()  # this is where you would insert your policy
@@ -27,5 +28,6 @@ while not env.quit:
 
     if terminated or truncated:
         env.reset()
+        env.render()
 
 env.close()
