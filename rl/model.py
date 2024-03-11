@@ -46,19 +46,19 @@ env = Monitor(Snake3())
 
 model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
-model.save(f"rl/{board_size}models/{model_name}")
+model.save(f"rl/{board_size}_models/{model_name}")
 
 rewards = env.get_episode_rewards()
 
-with open(f'rl/{board_size}models/{model_name}_rewards.txt', 'w') as file:
+with open(f'rl/{board_size}_models/{model_name}_rewards.txt', 'w') as file:
     json.dump(rewards, file, indent=4)
 
 # Load the existing JSON file
-with open(f'rl/{board_size}models/info.json', 'r') as file:
+with open(f'rl/{board_size}_models/info.json', 'r') as file:
     data = json.load(file)
 
 data.update(info)
 
 # Write the updated JSON back to the file
-with open(f'rl/{board_size}models/info.json', 'w') as file:
+with open(f'rl/{board_size}_models/info.json', 'w') as file:
     json.dump(data, file, indent=4)
