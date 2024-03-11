@@ -1,7 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 
-with open(f'rl/4x4models/ppo4_12_rewards.txt', 'r') as file:
+with open(f'rl/4x4models/a2c3_1_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
 def average_at_intervals(data, interval):
@@ -13,7 +13,7 @@ def average_at_intervals(data, interval):
             averages.append(sum(chunk) / len(chunk))
     return averages
 
-interval = 100
+interval = 1000
 averages = average_at_intervals(rewards, interval)
 
 plt.plot(averages)

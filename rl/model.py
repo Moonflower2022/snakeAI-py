@@ -1,11 +1,10 @@
-from snakes.snake_4_2 import Snake4
+from snakes.snake_3 import Snake3
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
 import json
-import matplotlib.pyplot as plt
 
 # CnnPolicy
 
@@ -16,16 +15,16 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
-model_name = "ppo4_12"
+model_name = "a2c3_1"
 
 board_size = "4x4"
 starting_length = 4
 env_type = "4action"
-rewards_description = "1 for eating fruit, -1 for dying, 100 for winning"
+rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
 gamma = 0.98
 ent_coef = 0.01
 learning_rate = 0.0008895296207610578
-time_steps = 4000000
+time_steps = 2_000_000
 
 info = {
     f"{model_name}": {
@@ -43,9 +42,9 @@ info = {
 }
 
 # Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
-env = Monitor(Snake4())
+env = Monitor(Snake3())
 
-model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}models/{model_name}")
 

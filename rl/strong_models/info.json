@@ -1,0 +1,25 @@
+{
+    "ppo4_1": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "-1 for dying, 1 for getting fruit, 100 for winning",
+        "gamma": "0.98",
+        "ent_coef": "0.02",
+        "learning_rate": "0.0008895296207610578",
+        "strength": "strong",
+        "notes": "dies randomly sometimes | was trained when the env had a bug"
+    },
+    "ppo4_12": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "strength": "strong",
+        "notes": "not optimal, also dies *sometimes"
+    }
+}
