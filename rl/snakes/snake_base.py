@@ -4,7 +4,7 @@ import random
 import pygame
 
 class SnakeEnv(Env):
-    render_modes = ['human', 'not_human']
+    render_modes = ['human', 'train']
     display_width = 800
     display_height = 800
 
@@ -20,7 +20,7 @@ class SnakeEnv(Env):
         3: pygame.Color(*fruit_color)
     }
 
-    def __init__(self, render_mode='human', width=4, height=4, snake_length=4, random_seed=None) -> None:
+    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
         assert snake_length > 0
         assert width > 0
         assert height > 0

@@ -13,14 +13,14 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
-model_name = "ppo4_2"
+model_name = "ppo4_3_unbugged"
 
 board_size = "4x4"
 starting_length = 4
 env_type = "4action"
 rewards_description = "-10 for dying, 10 for getting fruit, -0.00001 if neither"
 gamma = 0.98
-ent_coef = 0.02
+ent_coef = 0.005
 learning_rate = 0.0008895296207610578
 
 info = {
@@ -38,11 +38,11 @@ info = {
 }
 
 # Parallel environments
-env = Snake4(render_mode='not_human', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
+env = Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
 
 model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-model.learn(total_timesteps=4000000)
-model.save(f"stable_baselines/{board_size}models/{model_name}")
+model.learn(total_timesteps=500000)
+model.save(f"/{board_size}models/{model_name}")
 
 import json
 

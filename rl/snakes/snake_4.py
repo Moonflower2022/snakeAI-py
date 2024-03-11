@@ -12,7 +12,7 @@ import pygame
 
 class Snake4(SnakeEnv):
 
-    def __init__(self, render_mode='human', width=4, height=4, snake_length=4, random_seed=None) -> None:
+    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
         super().__init__(render_mode=render_mode, width=width, height=height, snake_length=snake_length, random_seed=random_seed)
 
         # env variables
