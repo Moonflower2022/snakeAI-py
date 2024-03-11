@@ -5,8 +5,8 @@ import pygame
 
 class SnakeEnv(Env):
     render_modes = ['human', 'train']
-    display_width = 800
-    display_height = 800
+    display_width = 600
+    display_height = 600
 
     body_color = (161, 181, 108)
     head_color = (102, 204, 0)

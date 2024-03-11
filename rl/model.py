@@ -1,8 +1,11 @@
-from snakes.snake_4 import Snake4
+from snakes.snake_4_2 import Snake4
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.monitor import Monitor
+import json
+import matplotlib.pyplot as plt
 
 # CnnPolicy
 
@@ -13,15 +16,16 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
-model_name = "ppo4_3_unbugged"
+model_name = "ppo4_12"
 
 board_size = "4x4"
 starting_length = 4
 env_type = "4action"
-rewards_description = "-10 for dying, 10 for getting fruit, -0.00001 if neither"
+rewards_description = "1 for eating fruit, -1 for dying, 100 for winning"
 gamma = 0.98
-ent_coef = 0.005
+ent_coef = 0.01
 learning_rate = 0.0008895296207610578
+time_steps = 4000000
 
 info = {
     f"{model_name}": {
@@ -32,26 +36,30 @@ info = {
         "gamma": gamma,
         "ent_coef": ent_coef,
         "learning_rate": learning_rate,
+        "time_steps": time_steps,
         "strength": "",
         "notes": ""
     }
 }
 
-# Parallel environments
-env = Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
+# Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
+env = Monitor(Snake4())
 
 model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-model.learn(total_timesteps=500000)
-model.save(f"/{board_size}models/{model_name}")
+model.learn(total_timesteps=time_steps)
+model.save(f"rl/{board_size}models/{model_name}")
 
-import json
+rewards = env.get_episode_rewards()
+
+with open(f'rl/{board_size}models/{model_name}_rewards.txt', 'w') as file:
+    json.dump(rewards, file, indent=4)
 
 # Load the existing JSON file
-with open(f'stable_baselines/{board_size}models/info.json', 'r') as file:
+with open(f'rl/{board_size}models/info.json', 'r') as file:
     data = json.load(file)
 
 data.update(info)
 
 # Write the updated JSON back to the file
-with open(f'stable_baselines/{board_size}models/info.json', 'w') as file:
+with open(f'rl/{board_size}models/info.json', 'w') as file:
     json.dump(data, file, indent=4)
