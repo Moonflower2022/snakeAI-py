@@ -1,4 +1,5 @@
-from snakes.snake_3 import Snake3
+from snakes.snake_4_3 import Snake4
+from snakes.snake_3_2 import Snake3
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
@@ -15,16 +16,18 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
-model_name = "a2c3_1"
+env_type = "4action"
+
+model_name = f"ppo{env_type[0]}_16"
 
 board_size = "4x4"
 starting_length = 4
-env_type = "4action"
-rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
+rewards_description = "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
+# "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing"
 gamma = 0.98
 ent_coef = 0.01
 learning_rate = 0.0008895296207610578
-time_steps = 2_000_000
+time_steps = 500_000
 
 info = {
     f"{model_name}": {
@@ -42,9 +45,13 @@ info = {
 }
 
 # Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
-env = Monitor(Snake3())
+if env_type[0] == "4":
+    env = Monitor(Snake4())
+else: # env_type[0] == "3"
+    env = Monitor(Snake3())
 
-model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+# model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}_models/{model_name}")
 
@@ -54,11 +61,11 @@ with open(f'rl/{board_size}_models/{model_name}_rewards.txt', 'w') as file:
     json.dump(rewards, file, indent=4)
 
 # Load the existing JSON file
-with open(f'rl/{board_size}_models/info.json', 'r') as file:
+with open(f'rl/info/{board_size}_models_info.json', 'r') as file:
     data = json.load(file)
 
 data.update(info)
 
 # Write the updated JSON back to the file
-with open(f'rl/{board_size}_models/info.json', 'w') as file:
+with open(f'rl/info/{board_size}_models_info.json', 'w') as file:
     json.dump(data, file, indent=4)

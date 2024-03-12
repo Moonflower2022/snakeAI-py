@@ -8,7 +8,7 @@ import pygame
 # 10 for eating fruit 
 # -10 for dying
 # 0 for winning (you still get 10 for fruit)
-# -0.00001 for nothing
+# -0.01 for nothing
 
 class Snake4(SnakeEnv):
 
@@ -33,19 +33,19 @@ class Snake4(SnakeEnv):
         new = self.snake[-1] + self.action_map[action]
 
         if self._collision(self.snake, new, True):
-            return self._get_state(), -10, True, False, {'snake': self.snake}
+            return self._get_state(), -10, True, False, {'won': False}
         
         self.snake = np.append(self.snake, [new], axis=0)
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self._get_state(), 10, True, False, {'snake': self.snake}
+                return self._get_state(), 10, True, False, {'won': True}
             self.fruit = self._generate_fruit()
-            return self._get_state(), 10, False, False, {'snake': self.snake}
+            return self._get_state(), 10, False, False, {'won': None}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), -0.00001, False, False, {'snake': self.snake}
+        return self._get_state(), -0.01, False, False, {'won': None}
 
     def reset(self, seed=None) -> None:
         if seed:

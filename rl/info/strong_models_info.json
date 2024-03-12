@@ -1,0 +1,57 @@
+{
+    "ppo4_1": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "-1 for dying, 1 for getting fruit, 100 for winning",
+        "gamma": "0.98",
+        "ent_coef": "0.02",
+        "learning_rate": "0.0008895296207610578",
+        "win %":  0.812 ,
+        "avg moves to win":  42.467980295566505 ,
+        "stuck %":  0.0,
+        "notes": "dies randomly sometimes | was trained when the env had a bug"
+    },
+    "ppo4_12": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "win %":  0.848 ,
+        "avg moves to win":  42.097877358490564 ,
+        "stuck %":  0.0,
+        "notes": "not optimal, also dies *sometimes"
+    },
+    "ppo3_3": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "3action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 2500000,
+        "win %":  0.708 ,
+        "avg moves to win":  44.79661016949152 ,
+        "stuck %":  0.038,
+        "notes": "not the most optimal, dies abruptly sometimes, gets caught in infinite loops (only seen one)"
+    },
+    "ppo4_14": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "win %":  0.843,
+        "avg moves to win":  42.35349940688019,
+        "stuck %":  0.0,
+        "notes": ""
+    }
+}

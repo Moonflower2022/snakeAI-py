@@ -1,4 +1,4 @@
-from snakes.snake_4_2 import Snake4
+from snakes.snake_4 import Snake4
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
 from stable_baselines3 import DQN
@@ -7,7 +7,7 @@ from stable_baselines3.common.env_util import make_vec_env
 width = 4
 height = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_2_bugged")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_14")
 
 test_env = Snake4(render_mode='human', width=width, height=height, snake_length=4)
 
@@ -37,8 +37,8 @@ while not test_env.quit:
     total_moves += 1
     test_env.render()
     if terminated:
-        print(total_rewards)
-        print(total_moves)
+        print("total_rewards: ", total_rewards)
+        print("total_moves: ", total_moves)
         obs, info = test_env.reset()
         total_rewards = 0
         total_moves = 0
