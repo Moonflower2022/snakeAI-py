@@ -5,10 +5,10 @@ import random
 import pygame
 
 # rewards:
-# 1 for eating fruit 
-# -1 for dying
-# 5 for winning (you still get 10 for fruit)
-# 0 for nothing
+# 10 for eating fruit 
+# -10 for dying
+# 0 for winning (you still get 10 for fruit)
+# -0.01 for nothing
 
 class Snake4(SnakeEnv):
 
@@ -25,27 +25,27 @@ class Snake4(SnakeEnv):
             2: np.array([-1, 0]),
             3: np.array([1, 0]),
         }
-        self.observation_space = Box(low=0, high=3, shape=(width, height), dtype=np.int32)
-        # 0: empty space, 1: snake body, 2: snake head, 3: fruit
+        self.observation_space = Box(low=0, high=2, shape=(width, height), dtype=np.int32)
+        # 0: empty space, 1: snake body 2: fruit
     
     def step(self, action):
         # step(action) -> ObseravtionType, Float, Bool, Bool
         new = self.snake[-1] + self.action_map[action]
 
         if self._collision(self.snake, new, True):
-            return self._get_state(), -5, True, False, {'won': False}
+            return self._get_state(), -10, True, False, {'won': False}
         
         self.snake = np.append(self.snake, [new], axis=0)
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self._get_state(), 5, True, False, {'won': True}
+                return self._get_state(), 10, True, False, {'won': True}
             self.fruit = self._generate_fruit()
-            return self._get_state(), 1, False, False, {'won': None}
+            return self._get_state(), 10, False, False, {'won': None}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), 0, False, False, {'won': None}
+        return self._get_state(), -0.01, False, False, {'won': None}
 
     def reset(self, seed=None) -> None:
         if seed:
@@ -91,3 +91,22 @@ class Snake4(SnakeEnv):
 
     def close(self):
         pygame.quit()
+
+    def _get_state(self):
+        '''
+        Parameters:
+            snake (np.array, shape: (l, 2)): 2d positions (x, y) where x, y in Z, x in [0, width-1], y in [0, height-1]
+            fruit (np.array, shape: (2, )): fruit's position as a position (x, y) where x, y in Z, x in [0, width-1], y in [0, height-1]
+
+        Returns:
+            (np.array, shape: (w, h)): values in Z and in [0, 3], where 0: empty space, 1: snake body, 2: snake head, 3: fruit
+        '''
+
+        grid = np.zeros((self.width, self.height), dtype=np.int32)
+
+        for i in range(len(self.snake)):
+            grid[self.snake[i][1]][self.snake[i][0]] = 1
+
+        grid[self.fruit[1]][self.fruit[0]] = 2
+
+        return grid

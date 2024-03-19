@@ -1,4 +1,4 @@
-from snakes.snake_4_3 import Snake4
+from snakes.snake_4 import Snake4
 from snakes.snake_3_2 import Snake3
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
@@ -18,16 +18,17 @@ good_trials = [
 
 env_type = "4action"
 
-model_name = f"ppo{env_type[0]}_16"
+model_name = f"ppo{env_type[0]}_19"
 
 board_size = "4x4"
 starting_length = 4
-rewards_description = "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
+rewards_description = "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing"
 # "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing"
+# "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
 gamma = 0.98
 ent_coef = 0.01
 learning_rate = 0.0008895296207610578
-time_steps = 500_000
+time_steps = 4_000_000
 
 info = {
     f"{model_name}": {

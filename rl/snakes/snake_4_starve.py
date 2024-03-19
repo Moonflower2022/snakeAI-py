@@ -5,17 +5,24 @@ import random
 import pygame
 
 # rewards:
-# 1 for eating fruit 
-# -1 for dying
-# 5 for winning (you still get 10 for fruit)
-# 0 for nothing
+# 10 for eating fruit 
+# -10 for dying
+# 0 for winning (you still get 10 for fruit)
+# -0.01 for nothing
 
 class Snake4(SnakeEnv):
+
+    reward_unit = 0.1
+    max_reward_abs = 100 * reward_unit
 
     def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
         super().__init__(render_mode=render_mode, width=width, height=height, snake_length=snake_length, random_seed=random_seed)
 
+        self.steps = self.last_meal = 0
+
         # env variables
+
+        self.reward_range = (-self.max_reward_abs, self.max_reward_abs)
 
         self.action_space = Discrete(4) 
         # up down left right
@@ -28,24 +35,58 @@ class Snake4(SnakeEnv):
         self.observation_space = Box(low=0, high=3, shape=(width, height), dtype=np.int32)
         # 0: empty space, 1: snake body, 2: snake head, 3: fruit
     
+    def _hunger(self):
+        """Steps since last meal."""
+        return self.steps - self.last_meal
+
+    def _stamina(self):
+        """How long snake can live without food."""
+        world_area = self.width * self.height
+        stamina = world_area + len(self.snake) + 1
+        stamina = min(world_area * 2, stamina)
+        return stamina
+
+    def _is_starved_to_death(self):
+        """Return true if the snake hasn't eaten for too long."""
+        return self._hunger() > self._stamina()
+    
     def step(self, action):
         # step(action) -> ObseravtionType, Float, Bool, Bool
         new = self.snake[-1] + self.action_map[action]
 
-        if self._collision(self.snake, new, True):
-            return self._get_state(), -5, True, False, {'won': False}
-        
-        self.snake = np.append(self.snake, [new], axis=0)
+        self.steps += 1
 
-        if np.array_equal(new, self.fruit):
-            if len(self.snake) == self.width * self.height:
-                return self._get_state(), 5, True, False, {'won': True}
-            self.fruit = self._generate_fruit()
-            return self._get_state(), 1, False, False, {'won': None}
+        won = None # none means nothing, true means won, false means lost
 
-        self.snake = np.delete(self.snake, 0, axis=0)
+        reward = 0
+        win_reward = 50 * self.reward_unit
+        loss_reward = -win_reward
+
+        collision = self._collision(self.snake, new, True)
+        starved = self._is_starved_to_death()
+
+        if collision or starved:
+            won = False
+            reward += loss_reward
+
+        else:
         
-        return self._get_state(), 0, False, False, {'won': None}
+            self.snake = np.append(self.snake, [new], axis=0)
+
+            if np.array_equal(new, self.fruit):
+                if len(self.snake) == self.width * self.height:
+                    reward += win_reward
+                    won = True
+                else:
+                    self.last_meal = self.steps
+                    self.fruit = self._generate_fruit()
+                    reward += 10 * self.reward_unit
+            else:
+                self.snake = np.delete(self.snake, 0, axis=0)
+
+        reward = np.clip(reward, *self.reward_range)
+        
+        return self._get_state(), reward, not won == None, False, {'won': won}
 
     def reset(self, seed=None) -> None:
         if seed:

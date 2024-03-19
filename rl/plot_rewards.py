@@ -1,7 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 
-with open(f'rl/4x4_models/ppo4_16_rewards.txt', 'r') as file:
+with open(f'rl/4x4_models/ppo4_18_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
 def average_at_intervals(data, interval):

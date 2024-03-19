@@ -250,5 +250,29 @@
         "time_steps": 500000,
         "strength": "",
         "notes": ""
+    },
+    "ppo4_17": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action_same",
+        "rewards": "10 for eating fruit, -10 for dying, 0 for winning, 0 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 1000000,
+        "strength": "",
+        "notes": ""
+    },
+    "ppo4_18": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action_same",
+        "rewards": "10 for eating fruit, -10 for dying, 0 for winning, 0 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "strength": "",
+        "notes": ""
     }
 }
