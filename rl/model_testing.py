@@ -7,7 +7,7 @@ from stable_baselines3.common.env_util import make_vec_env
 width = 4
 height = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_18")
+model = A2C.load(f"rl/{width}x{height}_models/a2c4_6")
 
 test_env = Snake4(render_mode='human', width=width, height=height, snake_length=4)
 

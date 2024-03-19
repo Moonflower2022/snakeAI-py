@@ -5,7 +5,7 @@ import random
 import pygame
 
 # rewards:
-# 1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing
+# 1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing
 
 
 class Snake4(SnakeEnv):
@@ -42,7 +42,7 @@ class Snake4(SnakeEnv):
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), -0.01, False, False, {'snake': self.snake}
+        return self._get_state(), 0, False, False, {'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:

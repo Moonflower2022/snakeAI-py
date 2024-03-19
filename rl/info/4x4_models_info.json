@@ -274,5 +274,77 @@
         "time_steps": 4000000,
         "strength": "",
         "notes": ""
+    },
+    "a2c4_5": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 1000000,
+        "strength": "",
+        "notes": ""
+    },
+    "dqn4_3": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 700000,
+        "strength": "",
+        "notes": ""
+    },
+    "ppo4_19": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing",
+        "gamma": 0.8,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 2000000,
+        "strength": "",
+        "notes": ""
+    },
+    "ppo4_22": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing",
+        "gamma": 0.95,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 2000000,
+        "strength": "",
+        "notes": ""
+    },
+    "a2c4_6": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing",
+        "gamma": 0.8,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 2000000,
+        "strength": "",
+        "notes": ""
+    },
+    "a2c4_7": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing",
+        "gamma": 0.85,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "strength": "",
+        "notes": ""
     }
 }

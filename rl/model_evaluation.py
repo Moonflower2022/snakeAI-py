@@ -7,10 +7,10 @@ from stable_baselines3 import DQN
 width = 4
 height = 4
 
-model = A2C.load(f"rl/{width}x{height}_models/a2c3_1")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_20")
 # model = DQN.load(f"rl/strong_models/ppo4_1")
 
-test_env = Snake3(render_mode='train', width=width, height=height, snake_length=4)
+test_env = Snake4(render_mode='train', width=width, height=height, snake_length=4)
 
 trials = 1000
 wins = 0
