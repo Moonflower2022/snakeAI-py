@@ -4,7 +4,7 @@ from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.vec_env import VecMonitor
 import json
 
 # CnnPolicy
@@ -16,9 +16,14 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
+n_envs = 16 # False if no vec
+
 env_type = "4action"
 
-model_name = f"ppo{env_type[0]}_4"
+if n_envs == False:
+    model_name = f"ppo{env_type[0]}_4"
+else:
+    model_name = f"vec{n_envs}ppo{env_type[0]}_4"
 
 
 board_size = "4x4"
@@ -36,7 +41,7 @@ info = {
     f"{model_name}": {
         "board_size": f"{board_size}",
         "starting_length": starting_length,
-        "env": f"{env_type}",
+        "env": f"{n_envs}vec{env_type}",
         "rewards": f"{rewards_description}",
         "gamma": gamma,
         "ent_coef": ent_coef,
@@ -49,14 +54,12 @@ info = {
 
 # Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
 if env_type[0] == "4":
-    env = Monitor(Snake4())
+    env = VecMonitor(make_vec_env(Snake4, n_envs))
 else: # env_type[0] == "3"
-    env = Monitor(Snake3())
+    env = VecMonitor(make_vec_env(Snake3, n_envs))
 
 # model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
-            #ent_coef=ent_coef, 
-            learning_rate=learning_rate)
+model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}_models/{model_name}")
 
