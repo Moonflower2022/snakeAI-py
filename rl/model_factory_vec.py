@@ -4,6 +4,7 @@ from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import VecMonitor
 import json
 
@@ -16,24 +17,20 @@ good_trials = [
 {'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
 ]
 
-n_envs = 16 # False if no vec
+n_envs = 4 # False if no vec
 
 env_type = "4action"
 
-if n_envs == False:
-    model_name = f"ppo{env_type[0]}_4"
-else:
-    model_name = f"vec{n_envs}ppo{env_type[0]}_4"
-
+model_name = f"vec{n_envs}a2c{env_type[0]}_9"
 
 board_size = "4x4"
-starting_length = 4
-rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing"
+starting_length = 3
+rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
 # "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing"
 # "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
 # "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing"
-gamma = 0.85
-ent_coef = 0.01
+gamma = 0.9
+ent_coef = 0.3
 learning_rate = 0.0008895296207610578
 time_steps = 2_000_000
 
@@ -42,6 +39,7 @@ info = {
         "board_size": f"{board_size}",
         "starting_length": starting_length,
         "env": f"{n_envs}vec{env_type}",
+        "n_envs": n_envs,
         "rewards": f"{rewards_description}",
         "gamma": gamma,
         "ent_coef": ent_coef,
@@ -54,16 +52,17 @@ info = {
 
 # Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
 if env_type[0] == "4":
-    env = VecMonitor(make_vec_env(Snake4, n_envs))
+    env = make_vec_env(Snake4, n_envs)
 else: # env_type[0] == "3"
-    env = VecMonitor(make_vec_env(Snake3, n_envs))
+    env = make_vec_env(Snake3, n_envs)
 
 # model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}_models/{model_name}")
 
-rewards = env.get_episode_rewards()
+envs = env.envs
+rewards = [environment.get_episode_rewards() for environment in envs] 
 
 with open(f'rl/{board_size}_models/{model_name}_rewards.txt', 'w') as file:
     json.dump(rewards, file, indent=4)

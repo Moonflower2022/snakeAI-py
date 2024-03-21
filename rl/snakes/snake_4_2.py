@@ -27,7 +27,7 @@ class Snake4(SnakeEnv):
     
     def step(self, action):
         # step(action) -> ObseravtionType, Float, Bool, Bool
-        new = self.snake[-1] + self.action_map[action]
+        new = self.snake[-1] + self.action_map[int(action)]
 
         if self._collision(self.snake, new, True):
             return self._get_state(), -1, True, False, {'snake': self.snake}
@@ -42,7 +42,7 @@ class Snake4(SnakeEnv):
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), 0, False, False, {'snake': self.snake}
+        return self._get_state(), -0.01, False, False, {'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:

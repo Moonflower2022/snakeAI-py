@@ -83,5 +83,20 @@
         "avg ending snake length":  12.567 ,
         "stuck %":  0.0,
         "notes": ""
+    },
+    "ppo4_24": {
+        "board_size": "4x4",
+        "starting_length": 3,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 3000000,
+        "win %": 0.628,
+        "avg moves to win": 47.17404458598726,
+        "avg ending snake length": 11.3901,
+        "stuck %": 0.0558,
+        "notes": ""
     }
 }

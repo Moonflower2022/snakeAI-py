@@ -18,19 +18,19 @@ good_trials = [
 
 env_type = "4action"
 
-model_name = f"ppo{env_type[0]}_4"
+model_name = f"ppo{env_type[0]}_24"
 
 
 board_size = "4x4"
-starting_length = 4
-rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing"
+starting_length = 3
+rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
 # "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing"
 # "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
 # "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing"
-gamma = 0.85
+gamma = 0.98
 ent_coef = 0.01
 learning_rate = 0.0008895296207610578
-time_steps = 2_000_000
+time_steps = 3_000_000
 
 info = {
     f"{model_name}": {
@@ -54,8 +54,8 @@ else: # env_type[0] == "3"
     env = Monitor(Snake3())
 
 # model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
-            #ent_coef=ent_coef, 
+model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, 
+            ent_coef=ent_coef, 
             learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}_models/{model_name}")

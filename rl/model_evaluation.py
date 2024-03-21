@@ -6,13 +6,14 @@ from stable_baselines3 import DQN
 
 width = 4
 height = 4
+starting_length = 3
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_20")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_24")
 # model = DQN.load(f"rl/strong_models/ppo4_1")
 
-test_env = Snake4(render_mode='train', width=width, height=height, snake_length=4)
+test_env = Snake4(render_mode='train', width=width, height=height, snake_length=starting_length)
 
-trials = 1000
+trials = 10000
 wins = 0
 total_win_moves = 0
 total_snake_length = 0
@@ -33,7 +34,6 @@ for i in range(trials):
         moves += 1
         if moves > 1000:
             stuck += 1
-            print("stuck")
             break
             
             
