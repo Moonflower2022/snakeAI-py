@@ -9,7 +9,7 @@ width = 4
 height = 4
 starting_length = 4
 
-model = A2C.load(f"rl/{width}x{height}_models/vec4a2c4_4")
+model = DQN.load(f"rl/{width}x{height}_models/vec4dqn4_2")
 
 test_env = DummyVecEnv([lambda: Snake4(render_mode='human')])
 

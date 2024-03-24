@@ -6,21 +6,21 @@ from stable_baselines3 import DQN
 
 width = 4
 height = 4
-starting_length = 3
+starting_length = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_24")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_27")
 # model = DQN.load(f"rl/strong_models/ppo4_1")
 
 test_env = Snake4(render_mode='train', width=width, height=height, snake_length=starting_length)
 
-trials = 10000
+trials = 5000
 wins = 0
 total_win_moves = 0
 total_snake_length = 0
 stuck = 0
 
 for i in range(trials):
-    obs, info = test_env.reset()
+    obs, info = test_env.reset(seed=i)
     moves = 0
     while True:
         action, _states = model.predict(obs, deterministic=True)

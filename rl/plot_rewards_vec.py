@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 n_envs = 4
 actions = 4
 
-with open(f'rl/4x4_models/vec{n_envs}a2c{actions}_6_rewards.txt', 'r') as file:
+board_size = "6x6"
+
+with open(f'rl/{board_size}_models/vec{n_envs}ppo{actions}_1_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
 def average_at_intervals(data, interval):

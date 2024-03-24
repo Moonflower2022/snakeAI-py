@@ -1,4 +1,4 @@
-from snakes.snake_4_2 import Snake4
+from snakes.snake_4_starve import Snake4
 from snakes.snake_3_2 import Snake3
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
@@ -21,18 +21,18 @@ n_envs = 4 # False if no vec
 
 env_type = "4action"
 
-model_name = f"vec{n_envs}a2c{env_type[0]}_9"
+model_name = f"vec{n_envs}ppo{env_type[0]}_1" # ppo?
 
 board_size = "4x4"
-starting_length = 3
+starting_length = 4
 rewards_description = "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
-# "10 for eating fruit, -10 for dying, 0 for winning, 0.01 for nothing"
+# "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
 # "1 for eating fruit, -1 for dying, 1 for winning, 0 for nothing"
 # "1 for eating fruit, -5 for dying, 5 for winning, 0 for nothing"
-gamma = 0.9
-ent_coef = 0.3
+gamma = 0.98
+ent_coef = 0.01
 learning_rate = 0.0008895296207610578
-time_steps = 2_000_000
+time_steps = 4_000_000
 
 info = {
     f"{model_name}": {
@@ -46,18 +46,20 @@ info = {
         "learning_rate": learning_rate,
         "time_steps": time_steps,
         "strength": "",
-        "notes": ""
+        "notes": "rewards are clipped to (10, -10)"
     }
 }
 
 # Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
 if env_type[0] == "4":
-    env = make_vec_env(Snake4, n_envs)
+    env = make_vec_env(lambda: Snake4(width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length), n_envs)
 else: # env_type[0] == "3"
-    env = make_vec_env(Snake3, n_envs)
+    env = make_vec_env(lambda: Snake3(width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length), n_envs)
 
 # model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, 
+            ent_coef=ent_coef, 
+            learning_rate=learning_rate)
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{board_size}_models/{model_name}")
 
