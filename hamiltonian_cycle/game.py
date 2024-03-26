@@ -13,6 +13,7 @@ class Game:
         self.score = len(snake)
         self.game_over = False
         self.won = False
+        self.steps = 0
         self.velocity = np.array([1, 0])
         self.velocity = move_function(self) # Initial velocity
         self.move_function = move_function        
@@ -37,6 +38,7 @@ class Game:
     def update(self):
         if self.game_over:
             return False
+        self.steps += 1
         self.move()
         self.velocity = self.move_function(self)
         return True

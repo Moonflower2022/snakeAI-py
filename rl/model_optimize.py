@@ -1,26 +1,27 @@
 import optuna
-from snakes.snake_4 import Snake4
+from snakes.snake_4_2 import Snake4
 from stable_baselines3 import A2C
 from stable_baselines3 import PPO
+from stable_baselines3 import DQN
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 
-vec_env = make_vec_env(Snake4, n_envs=4)
+env = Snake4
 
 def objective(trial):
     # Define hyperparameters to tune
-    learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-3)
-    ent_coef = trial.suggest_uniform('ent_coef', 1e-4, 2e-2)
-    gamma = trial.suggest_uniform('gamma', 0.97, 0.99)
+    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-3)
+    exploration_initial_eps = trial.suggest_float('ent_coef', 1e-4, 2e-2)
+    gamma = trial.suggest_float('gamma', 0.97, 0.99)
     
     # Create A2C model with sampled hyperparameters
-    model = PPO("MlpPolicy", vec_env, verbose=0, learning_rate=learning_rate, ent_coef=ent_coef, gamma=gamma, n_steps=5)
+    model = DQN("MlpPolicy", env(), verbose=0, learning_rate=learning_rate, exploration_initial_eps=exploration_initial_eps, exploration_final_eps=0.01, gamma=gamma)
     
     # Train the model
-    model.learn(total_timesteps=50000)
+    model.learn(total_timesteps=250000)
     
     # Evaluate the model
-    mean_reward, _ = evaluate_policy(model, vec_env, n_eval_episodes=10)
+    mean_reward, _ = evaluate_policy(model, env(), n_eval_episodes=100)
     
     return mean_reward
 

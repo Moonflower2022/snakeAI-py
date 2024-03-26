@@ -12,6 +12,8 @@ class Snake4(SnakeEnv):
     def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
         super().__init__(render_mode=render_mode, width=width, height=height, snake_length=snake_length, random_seed=random_seed)
 
+        self.steps = 0
+
         # env variables
 
         self.action_space = Discrete(4) 
@@ -26,6 +28,10 @@ class Snake4(SnakeEnv):
         # 0: empty space, 1: snake body, 2: snake head, 3: fruit
     
     def step(self, action):
+        self.steps += 1
+
+        if self.steps > (self.width*self.height) ** 2:
+            return self._get_state(), -100, False, True, {'snake': self.snake}
         # step(action) -> ObseravtionType, Float, Bool, Bool
         new = self.snake[-1] + self.action_map[int(action)]
 
@@ -47,9 +53,8 @@ class Snake4(SnakeEnv):
     def reset(self, seed=None) -> None:
         if seed:
             self.random_seed = seed
-        self.over = False
         self.quit = False
-        self.steps = self.num_food = self.last_meal = 0
+        self.steps = 0
 
         self.snake = self._generate_snake(self.width, self.height, self.snake_length) # last index is head
         self.fruit = self._generate_fruit()

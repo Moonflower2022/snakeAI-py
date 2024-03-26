@@ -1,4 +1,4 @@
-from snakes.snake_4_2 import Snake4
+from snakes_prevent.snake_4_2 import Snake4
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
 from stable_baselines3 import DQN
@@ -8,7 +8,7 @@ width = 4
 height = 4
 starting_length = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_24")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_32")
 
 
 test_env = Snake4(render_mode='human', width=width, height=height, snake_length=starting_length)

@@ -1,4 +1,4 @@
-from snakes.snake_4 import Snake4
+from snakes_prevent.snake_4 import Snake4
 from snakes.snake_3 import Snake3
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
@@ -8,8 +8,10 @@ width = 4
 height = 4
 starting_length = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_27")
-# model = DQN.load(f"rl/strong_models/ppo4_1")
+model_name = "ppo4_32"
+
+model = PPO.load(f"rl/{width}x{height}_models/{model_name}")
+# model = PPO.load(f"rl/strong_models/ppo4_31")
 
 test_env = Snake4(render_mode='train', width=width, height=height, snake_length=starting_length)
 
@@ -39,6 +41,8 @@ for i in range(trials):
             
 
 test_env.close()
+
+print("model:", model_name)
 
 print("\"win %\": ", wins/trials, ",")
 if wins != 0:

@@ -1,12 +1,12 @@
 import json
 import matplotlib.pyplot as plt
 
-n_envs = 4
+n_envs = 16
 actions = 4
 
 board_size = "6x6"
 
-with open(f'rl/{board_size}_models/vec{n_envs}ppo{actions}_1_rewards.txt', 'r') as file:
+with open(f'rl/{board_size}_models/vec{n_envs}a2c{actions}_3_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
 def average_at_intervals(data, interval):

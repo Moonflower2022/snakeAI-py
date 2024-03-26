@@ -9,7 +9,7 @@ width = 4
 height = 4
 starting_length = 4
 
-model = DQN.load(f"rl/{width}x{height}_models/vec4dqn4_2")
+model = DQN.load(f"rl/{width}x{height}_models/vec16dqn4_1")
 
 test_env = DummyVecEnv([lambda: Snake4(render_mode='human')])
 

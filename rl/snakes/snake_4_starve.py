@@ -52,9 +52,13 @@ class Snake4(SnakeEnv):
     
     def step(self, action):
         # step(action) -> ObseravtionType, Float, Bool, Bool
-        new = self.snake[-1] + self.action_map[action]
 
         self.steps += 1
+
+        if self.steps > (self.width*self.height) ** 2:
+            return self._get_state(), -100, False, True, {'snake': self.snake}
+        
+        new = self.snake[-1] - self.action_map[action]
 
         won = None # none means nothing, true means won, false means lost
 
@@ -93,7 +97,7 @@ class Snake4(SnakeEnv):
             self.random_seed = seed
         self.over = False
         self.quit = False
-        self.steps = self.num_food = self.last_meal = 0
+        self.steps = self.last_meal = 0
 
         self.snake = self._generate_snake(self.width, self.height, self.snake_length) # last index is head
         self.fruit = self._generate_fruit()
