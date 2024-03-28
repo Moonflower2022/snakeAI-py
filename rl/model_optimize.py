@@ -1,12 +1,12 @@
 import optuna
-from snakes.snake_4_2 import Snake4
+from snakes.snake_env import SnakeEnv
 from stable_baselines3 import A2C
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 
-env = Snake4
+env = SnakeEnv
 
 def objective(trial):
     # Define hyperparameters to tune

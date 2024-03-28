@@ -1,20 +1,12 @@
 import json
 import matplotlib.pyplot as plt
+from helpers import rolling_averages
 
 with open(f'rl/4x4_models/a2c4_19_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
-def average_at_intervals(data, interval):
-    n = len(data)
-    averages = []
-    for i in range(0, n, interval):
-        chunk = data[i:min(i+interval, n)]  # Handle the last chunk if its length is less than the interval
-        if chunk:  # Check if the chunk is not empty
-            averages.append(sum(chunk) / len(chunk))
-    return averages
-
 interval = 1000
-averages = average_at_intervals(rewards, interval)
+averages = rolling_averages(rewards, interval)
 
 plt.plot(averages)
 

@@ -1,11 +1,11 @@
-from snakes_prevent.snake_4_starve import Snake4
-from snakes.snake_3_2 import Snake3
+from snakes.snake_env import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import VecMonitor
+from helpers import replace_key_with_multiple
 import json
 
 # CnnPolicy
@@ -19,32 +19,33 @@ good_trials = [
 
 n_envs = 16 # False if no vec
 
-env_type = "4action"
-
 model_type = "a2c"
 
-model_name = f"vec{n_envs}{model_type}{env_type[0]}_6"
+model_name = f"vec{n_envs}{model_type}4_6"
 
-board_size = "4x4"
+width = 4
+height = 4
 starting_length = 4
-rewards_description = "1 for eating fruit, -1 for dying, 1 for winning, -1 for starving, -0.001 for nothing"
-# "1 for eating fruit, -1 for dying, 1 for winning, -0.001 for nothing"
-# "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing"
-# "1 for eating fruit, -1 for dying, 5 for winning, 1 for starving"
-# "1 for eating fruit, -1 for dying, 1 for winning, -1 for starving, -0.001 for nothing"
+rewards = {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
+# {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
+# {'fruit': 1, 'lose': -1, 'win': 100, 'nothing': -0.01}
+# {'fruit': 1, 'lose': -1, 'win': 5, 'nothing': 0}
+# {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
+
+starve = True
+no_backwards = True
+step_limit = 2 ** ((width + height) / 4) * 50
 gamma = 0.95
 ent_coef = 0.1
-exploration_initial_eps = 0.6
-exploration_final_eps = 0.4
-exploration_fraction = 1
 learning_rate = 0.0008895296207610578
 time_steps = 10_000_000
 
-# Snake4(render_mode='train', width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length) 
-if env_type[0] == "4":
-    env = make_vec_env(lambda: Snake4(width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length), n_envs)
-else: # env_type[0] == "3"
-    env = make_vec_env(lambda: Snake3(width=int(board_size[0]), height=int(board_size[2]), snake_length=starting_length), n_envs)
+# for dqn only
+exploration_initial_eps = 0.6
+exploration_final_eps = 0.4
+exploration_fraction = 1
+
+env = make_vec_env(lambda: SnakeEnv(width=width, height=height, snake_length=starting_length, rewards=rewards, starve=starve, no_backwards=no_backwards, step_limit=step_limit), n_envs)
 model = A2C("MlpPolicy", env, verbose=1, n_steps=5, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 '''
 model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
@@ -55,55 +56,47 @@ model = DQN("MlpPolicy", env, verbose=1, gamma=gamma,
 '''
 
 model.learn(total_timesteps=time_steps)
-model.save(f"rl/{board_size}_models/{model_name}")
+model.save(f"rl/{width}x{height}_models/{model_name}")
 
 envs = env.envs
 rewards = [environment.get_episode_rewards() for environment in envs] 
 
-with open(f'rl/{board_size}_models/{model_name}_rewards.txt', 'w') as file:
+with open(f'rl/{width}x{height}_models/{model_name}_rewards.txt', 'w') as file:
     json.dump(rewards, file, indent=4)
 
 # Load the existing JSON file
-with open(f'rl/info/{board_size}_models_info.json', 'r') as file:
+with open(f'rl/info/{width}x{height}_models_info.json', 'r') as file:
     data = json.load(file)
 
-eval_eposodes = 250
+eval_eposodes = 500
+
+info = {
+    f"{model_name}": {
+        "board_size": f"{width}x{height}",
+        "starting_length": starting_length,
+        "rewards": rewards,
+        "starve": starve, 
+        "step_limit": step_limit,
+        "gamma": gamma,
+        "ent_coef": ent_coef, 
+        "learning_rate": learning_rate,
+        "time_steps": time_steps,
+        f"ending_{eval_eposodes}_avg_rewards": sum(sum(reward[-eval_eposodes:]) for reward in rewards)/(eval_eposodes * n_envs) if all(len(reward) >= eval_eposodes for reward in rewards) else "not long enough",
+        "notes": ""
+    }
+}
 
 if model_type == "dqn":
-    info = {
-        f"{model_name}": {
-            "board_size": f"{board_size}",
-            "starting_length": starting_length,
-            "env": f"{env_type}",
-            "rewards": f"{rewards_description}",
-            "gamma": gamma,
-            "exploration_fraction": exploration_fraction,
-            "exploration_initial_eps": exploration_initial_eps, 
-            "exploration_final_eps": exploration_final_eps,
-            "learning_rate": learning_rate,
-            "time_steps": time_steps,
-            f"ending_{eval_eposodes}_avg_rewards": sum(sum(reward[-eval_eposodes:]) for reward in rewards)/(eval_eposodes * n_envs) if all(len(reward) >= eval_eposodes for reward in rewards) else "not long enough",
-            "notes": "backwards -> forwards"
-        }
-    }
-else:
-    info = {
-        f"{model_name}": {
-            "board_size": f"{board_size}",
-            "starting_length": starting_length,
-            "env": f"{env_type}",
-            "rewards": f"{rewards_description}",
-            "gamma": gamma,
-            "ent_coef": ent_coef,
-            "learning_rate": learning_rate,
-            "time_steps": time_steps,
-            f"ending_{eval_eposodes}_avg_rewards": sum(sum(reward[-eval_eposodes:]) for reward in rewards)/(eval_eposodes * n_envs) if all(len(reward) >= eval_eposodes for reward in rewards) else "not long enough",
-            "notes": "backwards -> forwards"
-        }
-    }
+    info = replace_key_with_multiple(info, 'ent_coef', {
+        "exploration_fraction": exploration_fraction,
+        "exploration_initial_eps": exploration_initial_eps, 
+        "exploration_final_eps": exploration_final_eps,
+    })
+
+
 
 data.update(info)
 
 # Write the updated JSON back to the file
-with open(f'rl/info/{board_size}_models_info.json', 'w') as file:
+with open(f'rl/info/{width}x{height}_models_info.json', 'w') as file:
     json.dump(data, file, indent=4)

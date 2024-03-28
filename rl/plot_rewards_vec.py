@@ -1,5 +1,6 @@
 import json
 import matplotlib.pyplot as plt
+from helpers import rolling_averages
 
 n_envs = 16
 actions = 4
@@ -9,19 +10,12 @@ board_size = "4x4"
 with open(f'rl/{board_size}_models/vec{n_envs}a2c{actions}_5_rewards.txt', 'r') as file:
     rewards = json.load(file)
 
-def average_at_intervals(data, interval):
-    n = len(data)
-    averages = []
-    for i in range(0, n, interval):
-        chunk = data[i:min(i+interval, n)]  # Handle the last chunk if its length is less than the interval
-        if chunk:  # Check if the chunk is not empty
-            averages.append(sum(chunk) / len(chunk))
-    return averages
+
 
 interval = 1000
 
 for i in range(n_envs):
-    plt.plot(average_at_intervals(rewards[i], interval), label=i)
+    plt.plot(rolling_averages(rewards[i], interval), label=i)
 
 plt.title('Rewards vs Iteration')
 plt.xlabel('Iteration #')
