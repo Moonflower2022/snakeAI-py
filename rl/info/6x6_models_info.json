@@ -137,5 +137,57 @@
         "time_steps": 2000000,
         "strength": "",
         "notes": ""
+    },
+    "ppo4_6": {
+        "board_size": "6x6",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing",
+        "gamma": 0.9,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 3000000,
+        "strength": "",
+        "notes": "backwards -> forwards"
+    },
+    "a2c4_1": {
+        "board_size": "6x6",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 3000000,
+        "strength": "",
+        "notes": "backwards -> forwards"
+    },
+    "vec16a2c4_4": {
+        "board_size": "6x6",
+        "starting_length": 2,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 5 for winning, 1 for starving",
+        "gamma": 0.98,
+        "exploration_fraction": 1,
+        "exploration_initial_eps": 0.035,
+        "exploration_final_eps": 0.02,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 2000000,
+        "strength": "",
+        "notes": "backwards -> forwards"
+    },
+    "vec16a2c4_5": {
+        "board_size": "6x6",
+        "starting_length": 2,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 1 for winning, -0.001 for nothing",
+        "gamma": 0.98,
+        "exploration_fraction": 1,
+        "exploration_initial_eps": 0.035,
+        "exploration_final_eps": 0.02,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 6000000,
+        "strength": "",
+        "notes": "backwards -> forwards"
     }
 }

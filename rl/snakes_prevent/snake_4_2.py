@@ -5,7 +5,7 @@ import random
 import pygame
 
 # rewards:
-# 1 for eating fruit, -1 for dying, 100 for winning, 0 for nothing
+# 1 for eating fruit, -1 for dying, 10 for winning, -0.0001 for nothing
 
 
 class Snake4(SnakeEnv):
@@ -31,13 +31,13 @@ class Snake4(SnakeEnv):
         # step(action) -> ObseravtionType, Float, Bool, Bool
         self.steps += 1
 
-        if self.steps > (self.width*self.height) ** 2:
-            return self._get_state(), -100, False, True, {'snake': self.snake}
+        if self.steps > 2 ** ((self.width + self.height)/4) * 50:
+            return self._get_state(), -1, False, True, {'snake': self.snake}
         
-        if not len(self.snake) == 1 and np.array_equal(self.snake[-2] - self.snake[-1], self.action_map[action]):
-            new = self.snake[-1] - self.action_map[action]
+        if not len(self.snake) == 1 and np.array_equal(self.snake[-2] - self.snake[-1], self.action_map[int(action)]):
+            new = self.snake[-1] - self.action_map[int(action)]
         else:
-            new = self.snake[-1] + self.action_map[action]
+            new = self.snake[-1] + self.action_map[int(action)]
 
         if self._collision(self.snake, new, True):
             return self._get_state(), -1, True, False, {'snake': self.snake}
@@ -46,13 +46,13 @@ class Snake4(SnakeEnv):
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self._get_state(), 100, True, False, {'snake': self.snake}
+                return self._get_state(), self.width * self.height, True, False, {'snake': self.snake}
             self.fruit = self._generate_fruit()
             return self._get_state(), 1, False, False, {'snake': self.snake}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), -0.01, False, False, {'snake': self.snake}
+        return self._get_state(), -0.001, False, False, {'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:

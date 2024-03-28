@@ -12,7 +12,7 @@ import pygame
 
 class Snake4(SnakeEnv):
 
-    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
+    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, rewards={}, starve=False, random_seed=None) -> None:
         super().__init__(render_mode=render_mode, width=width, height=height, snake_length=snake_length, random_seed=random_seed)
 
         self.steps = 0
@@ -34,8 +34,8 @@ class Snake4(SnakeEnv):
         # step(action) -> ObseravtionType, Float, Bool, Bool
         self.steps += 1
 
-        if self.steps > (self.width*self.height) ** 2:
-            return self._get_state(), -100, False, True, {'snake': self.snake}
+        if self.steps > 2 ** (self.width + self.height)/4 * 50:
+            return self._get_state(), -1, False, True, {'won': False}
         
         
         if not len(self.snake) == 1 and np.array_equal(self.snake[-2] - self.snake[-1], self.action_map[action]):
@@ -44,19 +44,19 @@ class Snake4(SnakeEnv):
             new = self.snake[-1] + self.action_map[action]
 
         if self._collision(self.snake, new, True):
-            return self._get_state(), -16, True, False, {'won': False}
+            return self._get_state(), -1, True, False, {'won': False}
         
         self.snake = np.append(self.snake, [new], axis=0)
 
         if np.array_equal(new, self.fruit):
             if len(self.snake) == self.width * self.height:
-                return self._get_state(), 16, True, False, {'won': True}
+                return self._get_state(), 1, True, False, {'won': True}
             self.fruit = self._generate_fruit()
             return self._get_state(), 1, False, False, {'won': None}
 
         self.snake = np.delete(self.snake, 0, axis=0)
         
-        return self._get_state(), 0, False, False, {'won': None}
+        return self._get_state(), -0.001, False, False, {'won': None}
 
     def reset(self, seed=None) -> None:
         if seed:

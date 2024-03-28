@@ -3,7 +3,7 @@ import numpy as np
 import random
 import pygame
 
-class SnakeEnv(Env):
+class Snake(Env):
     render_modes = ['human', 'train']
     display_width = 600
     display_height = 600
@@ -85,7 +85,7 @@ class SnakeEnv(Env):
             viable_options = [option for option in options if not self._collision(snake, option, False)]
 
             if len(viable_options) == 0:
-                return self.generate_snake(snake_length, width, height)
+                return self._generate_snake(width, height, snake_length)
             if self.random_seed: 
                 random.seed(self.random_seed)
             snake.append(random.choice(viable_options))

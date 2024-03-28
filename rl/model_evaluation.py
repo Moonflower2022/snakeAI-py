@@ -6,12 +6,12 @@ from stable_baselines3 import DQN
 
 width = 4
 height = 4
-starting_length = 4
+starting_length = 8
 
-model_name = "ppo4_32"
+model_name = "ppo4_40"
 
 model = PPO.load(f"rl/{width}x{height}_models/{model_name}")
-# model = PPO.load(f"rl/strong_models/ppo4_31")
+# model = PPO.load(f"rl/strong_models/ppo4_33")
 
 test_env = Snake4(render_mode='train', width=width, height=height, snake_length=starting_length)
 
@@ -21,20 +21,24 @@ total_win_moves = 0
 total_snake_length = 0
 stuck = 0
 
+print("Starting evaluation...")
+
 for i in range(trials):
-    obs, info = test_env.reset(seed=i)
+    print(f"{i}/{trials}", end="\r")
+    obs, info = test_env.reset()
     moves = 0
     while True:
         action, _states = model.predict(obs, deterministic=True)
         obs, rewards, terminated, truncated, info = test_env.step(int(action))
-        if terminated:
+        if terminated or truncated:
             total_snake_length += len(test_env.snake)
-            if info["won"]:
+        if terminated:
+            if info["won"] == True:
                 wins += 1
                 total_win_moves += moves
             break
         moves += 1
-        if moves > 1000:
+        if truncated:
             stuck += 1
             break
             
@@ -44,10 +48,10 @@ test_env.close()
 
 print("model:", model_name)
 
-print("\"win %\": ", wins/trials, ",")
+print("\"win ratio\": ", wins/trials, ",")
 if wins != 0:
     print("\"avg moves to win\": ", total_win_moves/wins, ",")
 else: 
     print("no wins")
 print("\"avg ending snake length\": ", total_snake_length/trials, ",")
-print("\"stuck %\": ", stuck/trials)
+print("\"stuck ratio\": ", stuck/trials)

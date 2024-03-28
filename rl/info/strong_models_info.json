@@ -173,5 +173,53 @@
         "avg ending snake length":  13.0718 ,
         "stuck %":  0.0,
         "notes": "backwards -> forwards"
+    },
+    "ppo4_33": {
+        "board_size": "4x4",
+        "starting_length": 2,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 1 for winning, -0.001 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 3000000,
+        "win %":  0.8298 ,
+        "avg moves to win":  45.728127259580624 ,
+        "avg ending snake length":  14.0116 ,
+        "stuck %":  0.0,
+        "notes": "backwards -> forwards"
+    },
+    "dqn4_11": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, 100 for winning, -0.01 for nothing",
+        "gamma": 0.9,
+        "exploration_fraction": 1,
+        "exploration_initial_eps": 0.07,
+        "exploration_final_eps": 0.05,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "win %":  0.163 ,
+        "avg moves to win":  32.18895705521472 ,
+        "avg ending snake length":  12.0762 ,
+        "stuck %":  0.0,
+        "notes": ""
+    },
+    "ppo4_39": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "env": "4action",
+        "rewards": "1 for eating fruit, -1 for dying, width*height for winning, -0.001 for nothing",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008895296207610578,
+        "time_steps": 4000000,
+        "ending_250_avg_rewards": 20.782847999999994,
+        "win ratio":  0.879 ,
+        "avg moves to win":  41.63572241183163 ,
+        "avg ending snake length":  316.0976 ,
+        "stuck ratio":  0.0,
+        "notes": "backwards -> forwards"
     }
 }
