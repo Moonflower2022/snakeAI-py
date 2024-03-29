@@ -1,4 +1,4 @@
-from snakes.snake_4 import Snake4
+from envs.snake_env import SnakeEnv
 import time
 '''
 env = SnakeEnv(render_mode='human', display_width=400, display_height=400,
@@ -16,7 +16,7 @@ for _ in range(1000):
 env.close()
 '''
 
-env = Snake4(render_mode='human', width=4, height=4, snake_length=4)
+env = SnakeEnv(render_mode='human', width=4, height=4, snake_length=4)
 
 env.reset()
 

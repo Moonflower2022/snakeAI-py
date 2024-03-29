@@ -1,4 +1,4 @@
-from snakes.snake_env import SnakeEnv
+from envs.snake_env import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
@@ -8,19 +8,8 @@ from stable_baselines3.common.vec_env import VecMonitor
 from helpers import replace_key_with_multiple
 import json
 
-# CnnPolicy
-
-good_trials = [
-{'learning_rate': 0.0009712152710668071, 'ent_coef': 0.013574795187369957, 'gamma': 0.9757006706208164},
-{'learning_rate': 0.0007534396829162255, 'ent_coef': 0.019011104842401535, 'gamma': 0.9790678425582531},
-{'learning_rate': 0.0008754703052793183, 'ent_coef': 0.019832299628796565, 'gamma': 0.9793731979429715},
-{'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
-]
-
-n_envs = 16 # False if no vec
-
+n_envs = 16
 model_type = "a2c"
-
 model_name = f"vec{n_envs}{model_type}4_6"
 
 width = 4

@@ -7,7 +7,7 @@ import pygame
 
 
 class SnakeEnv(Snake):
-    reward_unit = 0.1
+    reward_unit = 1
 
     def __init__(self, render_mode='train', width=4, height=4, snake_length=4, rewards={'win': 1, 'fruit': 1, 'lose': -1, 'nothing': -0.0001}, 
                 starve=False, no_backwards=True, step_limit=None, random_seed=None) -> None:
@@ -59,26 +59,25 @@ class SnakeEnv(Snake):
         else:
             new = self.snake[-1] + self.action_map[action]
 
-        won = None  # none means nothing, true means won, false means lost
+        terminated = False  # none means nothing, true means won, false means lost
+        truncated = False
 
         reward = 0
-        win_reward = self.rewards['win'] * self.reward_unit
-        loss_reward = self.rewards['lose'] * self.reward_unit
 
         if self.step_limit != None and self.steps > self.step_limit:
-            won = False
-            reward = loss_reward
+            truncated = True
+            reward = self.rewards['lose'] * self.reward_unit
 
         if self._collision(self.snake, new, True) or (self.starve and self._is_starved_to_death()):
-            won = False
-            reward = loss_reward
+            terminated = True
+            reward = self.rewards['lose'] * self.reward_unit
         else:
             self.snake = np.append(self.snake, [new], axis=0)
 
             if np.array_equal(new, self.fruit):
                 if len(self.snake) == self.width * self.height:
-                    reward = win_reward
-                    won = True
+                    terminated = True
+                    reward = self.rewards['win'] * self.reward_unit
                 else:
                     self.last_meal = self.steps
                     self.fruit = self._generate_fruit()
@@ -87,7 +86,7 @@ class SnakeEnv(Snake):
                 self.snake = np.delete(self.snake, 0, axis=0)
                 reward = self.rewards['nothing'] * self.reward_unit
 
-        return self._get_state(), reward, not won == None, False, {'won': won, 'snake': self.snake}
+        return self._get_state(), reward, terminated, truncated, {'won': reward == self.rewards['win'] * self.reward_unit, 'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:

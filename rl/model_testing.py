@@ -1,4 +1,4 @@
-from snakes.snake_env import SnakeEnv
+from envs.snake_env import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
 from stable_baselines3 import DQN
@@ -6,11 +6,11 @@ from stable_baselines3.common.env_util import make_vec_env
 
 width = 4
 height = 4
-starting_length = 8
+starting_length = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_40")
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_41")
 
-test_env = SnakeEnv(render_mode='human', width=width, height=height, snake_length=starting_length)
+test_env = SnakeEnv(render_mode='human', width=width, height=height, snake_length=starting_length, no_backwards=True)
 
 '''
 total_rewards = 0

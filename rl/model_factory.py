@@ -1,4 +1,4 @@
-from snakes.snake_env import SnakeEnv
+from envs.snake_env import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
@@ -6,63 +6,55 @@ from stable_baselines3.common.monitor import Monitor
 from helpers import replace_key_with_multiple
 import json
 
-# CnnPolicy
+model_type = "ppo"
 
-good_trials = [
-{'learning_rate': 0.0009712152710668071, 'ent_coef': 0.013574795187369957, 'gamma': 0.9757006706208164},
-{'learning_rate': 0.0007534396829162255, 'ent_coef': 0.019011104842401535, 'gamma': 0.9790678425582531},
-{'learning_rate': 0.0008754703052793183, 'ent_coef': 0.019832299628796565, 'gamma': 0.9793731979429715},
-{'learning_rate': 0.0009579932237818799, 'ent_coef': 0.01934918506617971, 'gamma': 0.98027651226877},
-]
-
-
-model_type = "a2c"
-
-model_name = f"{model_type}4_19"
+model_name = f"{model_type}4_42"
 
 width = 4
 height = 4
 starting_length = 4
-rewards = {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
+rewards = {'fruit': 1, 'lose': -1, 'win': width*height, 'nothing': -0.001}
 
 # {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
 # {'fruit': 1, 'lose': -1, 'win': 100, 'nothing': -0.01}
 # {'fruit': 1, 'lose': -width*height, 'win': width*height, 'nothing': 0}
 # {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
 
-starve = True
+starve = False
 no_backwards = True
 step_limit = 2 ** ((width + height)/4) * 50
-gamma = 0.95
-ent_coef = 0.02
+gamma = 0.98
+ent_coef = 0.01
 learning_rate = 0.0008
-time_steps = 6_000_000
+time_steps = 4_000_000
 
 # for dqn only
 exploration_fraction = 1
 exploration_initial_eps = 0.45
 exploration_final_eps = 0.03
 
-
-
-
 env = Monitor(SnakeEnv(width=width, height=height, snake_length=starting_length, rewards=rewards, starve=starve, no_backwards=no_backwards, step_limit=step_limit))
 
-model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
-'''
-model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
-            exploration_fraction=exploration_fraction,
-            exploration_initial_eps=exploration_initial_eps, 
-            exploration_final_eps=exploration_final_eps,
-            learning_rate=learning_rate)
-'''
+if model_type == "ppo":
+    model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+elif model_type == "a2c":
+    model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+elif model_type == "dqn":
+    model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
+                exploration_fraction=exploration_fraction,
+                exploration_initial_eps=exploration_initial_eps, 
+                exploration_final_eps=exploration_final_eps,
+                learning_rate=learning_rate)
+else:
+    raise Exception("bruh the model_type is not ppo, a2c, or dqn, wtf are you doing :'(")
+
 model.learn(total_timesteps=time_steps)
 model.save(f"rl/{width}x{height}_models/{model_name}")
 
-rewards = env.get_episode_rewards()
+training_rewards = env.get_episode_rewards()
 
 with open(f'rl/{width}x{height}_models/{model_name}_rewards.txt', 'w') as file:
-    json.dump(rewards, file, indent=4)
+    json.dump(training_rewards, file, indent=4)
 
 # Load the existing JSON file
 with open(f'rl/info/{width}x{height}_models_info.json', 'r') as file:

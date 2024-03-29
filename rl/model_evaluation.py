@@ -1,18 +1,18 @@
-from snakes.snake_env import SnakeEnv
+from envs.snake_env import SnakeEnv
 from stable_baselines3 import PPO
 from stable_baselines3 import A2C
 from stable_baselines3 import DQN
 
 width = 4
 height = 4
-starting_length = 8
+starting_length = 4
 
-model_name = "ppo4_40"
+model_name = "ppo4_41"
 
 model = PPO.load(f"rl/{width}x{height}_models/{model_name}")
 # model = PPO.load(f"rl/strong_models/ppo4_33")
 
-test_env = SnakeEnv(render_mode='train', width=width, height=height, snake_length=starting_length)
+test_env = SnakeEnv(render_mode='train', width=width, height=height, snake_length=starting_length, no_backwards=True, step_limit=2 ** (width / 4 + height / 4) * 50)
 
 trials = 5000
 wins = 0
