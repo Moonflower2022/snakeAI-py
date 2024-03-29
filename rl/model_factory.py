@@ -73,7 +73,7 @@ info = {
         "ent_coef": ent_coef, 
         "learning_rate": learning_rate,
         "time_steps": time_steps,
-        f"ending_{eval_eposodes}_avg_rewards": sum(rewards[-eval_eposodes:])/eval_eposodes if len(rewards) >= eval_eposodes else "not long enough",
+        f"ending_{eval_eposodes}_avg_rewards": sum(training_rewards[-eval_eposodes:])/eval_eposodes if len(training_rewards) >= eval_eposodes else "not long enough",
         "notes": ""
     }
 }

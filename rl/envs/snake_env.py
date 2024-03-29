@@ -1,4 +1,4 @@
-from snakes.snake_base import Snake
+from envs.snake_base import Snake
 from gymnasium.spaces import Discrete, Box
 import numpy as np
 import pygame
