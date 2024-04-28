@@ -2,22 +2,19 @@ from envs.snake_base import Snake
 from gymnasium.spaces import Discrete, Box
 import numpy as np
 import pygame
+import math
 
 # rewards dict needs 'lose', 'win', 'fruit', and 'nothing'
 
-class SnakeEnv(Snake):
+class SnakeEnvCustomRewards(Snake):
     reward_unit = 1
 
-    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, rewards={'win': 1, 'fruit': 1, 'lose': -1, 'nothing': -0.0001}, 
-                starve=False, no_backwards=True, step_limit=False, fruit_limit=False, random_seed=None) -> None:
+    def __init__(self, render_mode='train', width=4, height=4, snake_length=4, no_backwards=True, fruit_limit=False, random_seed=None) -> None:
         super().__init__(render_mode=render_mode, width=width, height=height,
                          snake_length=snake_length, random_seed=random_seed)
 
         self.steps = self.last_meal = 0
-        self.starve = starve
-        self.rewards = rewards
         self.no_backwards = no_backwards
-        self.step_limit = step_limit
         self.fruit_limit = fruit_limit
 
         # env variables
@@ -39,13 +36,6 @@ class SnakeEnv(Snake):
     def _hunger(self):
         """Steps since last meal."""
         return self.steps - self.last_meal
-
-    def _stamina(self):
-        """How long snake can live without food."""
-        world_area = self.width * self.height
-        stamina = world_area + len(self.snake) + 1
-        stamina = min(world_area * 2, stamina)
-        return stamina
     
     def _get_state(self):
         '''
@@ -69,7 +59,7 @@ class SnakeEnv(Snake):
 
         self.steps += 1
 
-        if self.no_backwards and (not len(self.snake) == 1 and np.array_equal(self.snake[-2] - self.snake[-1], self.action_map[action])):
+        if self.no_backwards and not len(self.snake) == 1 and np.array_equal(self.snake[-2] - self.snake[-1], self.action_map[action]):
             new = self.snake[-1] - self.action_map[action]
         else:
             new = self.snake[-1] + self.action_map[action]
@@ -80,13 +70,9 @@ class SnakeEnv(Snake):
 
         reward = 0
 
-        if self.step_limit != None and self.steps > self.step_limit:
-            truncated = True
-            reward = self.rewards['lose'] * self.reward_unit
-
-        if self._collision(self.snake, new, True) or (self.starve and self._hunger() > self._stamina()) or (self.fruit_limit and self._hunger() > self.fruit_limit):
+        if self._collision(self.snake, new, True) or (self.fruit_limit != None and self._hunger() > self.fruit_limit):
             terminated = True
-            reward = self.rewards['lose'] * self.reward_unit
+            reward = len(self.snake) - self.width * self.height
         else:
             self.snake = np.append(self.snake, [new], axis=0)
 
@@ -94,24 +80,25 @@ class SnakeEnv(Snake):
                 if len(self.snake) == self.width * self.height:
                     won = True
                     terminated = True
-                    reward = self.rewards['win'] * self.reward_unit
                 else:
                     self.last_meal = self.steps
                     self.fruit = self._generate_fruit()
-                    reward = self.rewards['fruit'] * self.reward_unit
+                reward = math.exp(((self.width * self.height) - (self.steps - self.last_meal)) / (self.width * self.height))
             else:
                 self.snake = np.delete(self.snake, 0, axis=0)
-                reward = self.rewards['nothing'] * self.reward_unit
+                reward = -0.001
 
-        return self._get_state(), reward, terminated, truncated, {'won': won, 'snake': self.snake}
+        return self._get_state(), self.reward_unit * reward, terminated, truncated, {'won': won, 'snake': self.snake}
 
     def reset(self, seed=None) -> None:
         if seed:
             self.random_seed = seed
+        self.over = False
         self.quit = False
         self.steps = self.last_meal = 0
 
-        self.snake = self._generate_snake(self.width, self.height, self.snake_length)  # last index is head
+        self.snake = self._generate_snake(
+            self.width, self.height, self.snake_length)  # last index is head
         self.fruit = self._generate_fruit()
 
         if self.render_mode == 'human':
@@ -161,6 +148,6 @@ class SnakeEnv(Snake):
         pygame.quit()
 
 if __name__ == '__main__':
-    env = SnakeEnv()
+    env = SnakeEnvCustomRewards()
     env.reset()
     print(env._get_state())

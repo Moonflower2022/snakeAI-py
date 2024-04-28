@@ -10,7 +10,10 @@ height = 4
 wins = 0
 total_win_steps = 0
 
+print("Starving evaluation...")
+
 for i in range(trials):
+    print(f"Trials: {i}/{trials}", end="\r")
 
     snake = generate_random_snake(snake_length, width, height)
 
@@ -31,7 +34,7 @@ for i in range(trials):
         wins += 1
         total_win_steps += game.steps
 
-print("win percent:", wins*100/trials)
+print("win ratio:", wins/trials)
 if wins == 0:
     print("no wins")
 else:

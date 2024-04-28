@@ -82,7 +82,7 @@ def model_move(game):
     
 
 dirname = os.path.dirname(__file__)
-file_path = os.path.join(dirname, "Q_Tables/table14.pkl")
+file_path = os.path.join(dirname, "q_tables/table10.pkl")
 
 with open(file_path, 'rb') as file:
     q_table = pickle.load(file)

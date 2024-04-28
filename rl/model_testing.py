@@ -8,36 +8,13 @@ width = 4
 height = 4
 starting_length = 4
 
-model = PPO.load(f"rl/{width}x{height}_models/ppo4_41")
-
-test_env = SnakeEnv(render_mode='human', width=width, height=height, snake_length=starting_length, no_backwards=True)
-
-'''
-total_rewards = 0
-total_moves = 0
-
-obs, info = test_env.reset()
-
-    while not test_env.quit:
-        action, _states = model.predict(obs, deterministic=True)
-        obs, rewards, terminated, truncated, info = test_env.step(int(action))
-        total_rewards += rewards
-        total_moves += 1
-        test_env.render()
-        if terminated:
-            print("total_rewards: ", total_rewards)
-            print("total_moves: ", total_moves)
-            obs, info = test_env.reset()
-            total_rewards = 0
-            total_moves = 0
-'''
-
-
+model = PPO.load(f"rl/{width}x{height}_models/ppo4_47")
+test_env = SnakeEnv(render_mode='human', width=width, height=height, snake_length=starting_length, no_backwards=True, step_limit=2 ** (width / 4 + height / 4) * 50)
 
 for i in range(10):
     obs, info = test_env.reset()
     
-    while not test_env.quit:
+    while True:
         action, _states = model.predict(obs, deterministic=True)
         obs, rewards, terminated, truncated, info = test_env.step(int(action))
         test_env.render()

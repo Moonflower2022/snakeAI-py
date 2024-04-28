@@ -15,9 +15,9 @@ class Snake(Env):
     FPS=5
 
     colors = {
-        1: pygame.Color(*body_color),
-        2: pygame.Color(*head_color),
-        3: pygame.Color(*fruit_color)
+        "body": pygame.Color(*body_color),
+        "head": pygame.Color(*head_color),
+        "fruit": pygame.Color(*fruit_color)
     }
 
     def __init__(self, render_mode='train', width=4, height=4, snake_length=4, random_seed=None) -> None:
@@ -100,22 +100,3 @@ class Snake(Env):
         if self.random_seed: 
             random.seed(self.random_seed)
         return random.choice(empty_spaces)
-    
-    def _get_state(self):
-        '''
-        Parameters:
-            snake (np.array, shape: (l, 2)): 2d positions (x, y) where x, y in Z, x in [0, width-1], y in [0, height-1]
-            fruit (np.array, shape: (2, )): fruit's position as a position (x, y) where x, y in Z, x in [0, width-1], y in [0, height-1]
-
-        Returns:
-            (np.array, shape: (w, h)): values in Z and in [0, 3], where 0: empty space, 1: snake body, 2: snake head, 3: fruit
-        '''
-
-        grid = np.zeros((self.width, self.height), dtype=np.int32)
-
-        for i in range(len(self.snake)):
-            grid[self.snake[i][1]][self.snake[i][0]] = 2 if (i == len(self.snake) - 1) else 1
-
-        grid[self.fruit[1]][self.fruit[0]] = 3
-
-        return grid

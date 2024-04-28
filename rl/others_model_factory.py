@@ -1,5 +1,6 @@
 from envs.snake_game_custom_wrapper_mlp import SnakeEnv
 from stable_baselines3 import PPO
+from sb3_contrib import MaskablePPO
 from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.monitor import Monitor
@@ -10,11 +11,11 @@ import json
 
 def main():
     model_type = "ppo"
-    model_name = f"{model_type}4_42"
+    model_name = f"{model_type}4_44"
 
     n_envs = 1
 
-    board_size = 4
+    board_size = 6
     starting_length = 3
     gamma = 0.98
     ent_coef = 0.01
@@ -26,7 +27,8 @@ def main():
     exploration_initial_eps = 0.45
     exploration_final_eps = 0.03
 
-    env = SubprocVecEnv([lambda: Monitor(SnakeEnv(board_size=board_size)) for i in range(n_envs)])
+    # env = SubprocVecEnv([lambda: Monitor(SnakeEnv(board_size=board_size)) for i in range(n_envs)])
+    env = Monitor(SnakeEnv(board_size=board_size))
 
     if model_type == "ppo":
         model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)

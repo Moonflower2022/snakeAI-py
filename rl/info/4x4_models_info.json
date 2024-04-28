@@ -1365,5 +1365,89 @@
         "time_steps": 10000000,
         "ending_250_avg_rewards": 10.0735,
         "notes": "backwards -> forwards"
+    },
+    "ppo4_43": {
+        "board_size": "4x4",
+        "starting_length": 3,
+        "rewards": {
+            "fruit": 1,
+            "lose": -1,
+            "win": 16,
+            "nothing": -0.001
+        },
+        "starve": true,
+        "step_limit": 200.0,
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 4000000,
+        "ending_500_avg_rewards": 24.561569999999968,
+        "win ratio": 0.8182,
+        "avg moves to win": 40.38376924957223,
+        "avg ending snake length": 14.1478,
+        "stuck ratio": 0.0004,
+        "notes": ""
+    },
+    "ppo4_45": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "rewards": {
+            "fruit": 1,
+            "lose": -1,
+            "win": 16,
+            "nothing": -0.001
+        },
+        "no_backwards": true,
+        "starve": true,
+        "step_limit": 200.0,
+        "policy": "CnnPolicy",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 1000000,
+        "ending_500_avg_rewards": 0.5001300000000002,
+        "notes": ""
+    },
+    "ppo4_46": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "rewards": {
+            "fruit": 1,
+            "lose": -1,
+            "win": 16,
+            "nothing": -0.001
+        },
+        "no_backwards": true,
+        "starve": false,
+        "step_limit": 200.0,
+        "fruit_limit": "fruit_limit",
+        "policy": "MlpPolicy",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 4000000,
+        "ending_500_avg_rewards": 22.386153999999962,
+        "notes": ""
+    },
+    "ppo4_47": {
+        "board_size": "4x4",
+        "starting_length": 4,
+        "rewards": {
+            "fruit": 1,
+            "lose": -1,
+            "win": 16,
+            "nothing": -0.001
+        },
+        "no_backwards": true,
+        "starve": false,
+        "step_limit": 200.0,
+        "fruit_limit": "fruit_limit",
+        "policy": "MlpPolicy",
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 4000000,
+        "ending_500_avg_rewards": 23.507352,
+        "notes": ""
     }
 }

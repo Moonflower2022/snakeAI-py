@@ -1,3 +1,25 @@
 {
-    
+    "ppo4_42": {
+        "board_size": "4x4",
+        "starting_length": 3,
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 4000000,
+        "ending_500_avg_rewards": 2.9118585578774776,
+        "win ratio":  0.9294 ,
+        "avg moves to win":  53.30299117710351 ,
+        "avg ending snake length":  15.8104 ,
+        "notes": ""
+    },
+    "ppo4_44": {
+        "board_size": "6x6",
+        "starting_length": 3,
+        "gamma": 0.98,
+        "ent_coef": 0.01,
+        "learning_rate": 0.0008,
+        "time_steps": 4000000,
+        "ending_500_avg_rewards": 0.6190417204080098,
+        "notes": ""
+    }
 }

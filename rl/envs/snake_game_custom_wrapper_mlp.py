@@ -33,14 +33,14 @@ class SnakeEnv(gymnasium.Env):
             self.step_limit = 1e9 # Basically no limit.
         self.reward_step_counter = 0
 
-    def reset(self, seed):
+    def reset(self, seed=None):
         self.game.reset()
 
         self.done = False
         self.reward_step_counter = 0
 
         obs = self._generate_observation()
-        return obs
+        return obs, {}
     
     def step(self, action):
         self.done, info = self.game.step(action) # info = {"snake_size": int, "snake_head_pos": np.array, "prev_snake_head_pos": np.array, "food_pos": np.array, "food_obtained": bool}
@@ -60,7 +60,7 @@ class SnakeEnv(gymnasium.Env):
 
             # Linear penalty decay.
             reward = info["snake_size"] - self.grid_size # (-max_growth, 0)
-            return obs, reward * 0.1, self.done, info
+            return obs, reward * 0.1, self.done, False, info
         
         elif info["food_obtained"]: # food eaten
             # Reward on num_steps between getting food.

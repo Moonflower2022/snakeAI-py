@@ -4,11 +4,13 @@ from stable_baselines3 import DQN
 from stable_baselines3 import A2C
 from stable_baselines3.common.monitor import Monitor
 from helpers import replace_key_with_multiple
+from model_evaluation import evaluate_model
 import json
 
 model_type = "ppo"
+model_name = f"test2"
 
-model_name = f"{model_type}4_42"
+trials = 5000
 
 width = 4
 height = 4
@@ -20,27 +22,30 @@ rewards = {'fruit': 1, 'lose': -1, 'win': width*height, 'nothing': -0.001}
 # {'fruit': 1, 'lose': -width*height, 'win': width*height, 'nothing': 0}
 # {'fruit': 1, 'lose': -1, 'win': 1, 'nothing': -0.001}
 
+policy = "MlpPolicy"
 starve = False
 no_backwards = True
+fruit_limit = width * height * 4
 step_limit = 2 ** ((width + height)/4) * 50
 gamma = 0.98
 ent_coef = 0.01
 learning_rate = 0.0008
-time_steps = 4_000_000
+time_steps = 10_000
 
 # for dqn only
 exploration_fraction = 1
 exploration_initial_eps = 0.45
 exploration_final_eps = 0.03
 
-env = Monitor(SnakeEnv(width=width, height=height, snake_length=starting_length, rewards=rewards, starve=starve, no_backwards=no_backwards, step_limit=step_limit))
+env = Monitor(SnakeEnv(width=width, height=height, snake_length=starting_length, rewards=rewards, starve=starve, no_backwards=no_backwards, step_limit=step_limit, fruit_limit=fruit_limit))
+
 
 if model_type == "ppo":
-    model = PPO("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+    model = PPO(policy, env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 elif model_type == "a2c":
-    model = A2C("MlpPolicy", env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
+    model = A2C(policy, env, verbose=1, gamma=gamma, ent_coef=ent_coef, learning_rate=learning_rate)
 elif model_type == "dqn":
-    model = DQN("MlpPolicy", env, verbose=1, gamma=gamma, 
+    model = DQN(policy, env, verbose=1, gamma=gamma, 
                 exploration_fraction=exploration_fraction,
                 exploration_initial_eps=exploration_initial_eps, 
                 exploration_final_eps=exploration_final_eps,
@@ -67,14 +72,16 @@ info = {
         "board_size": f"{width}x{height}",
         "starting_length": starting_length,
         "rewards": rewards,
+        "no_backwards": no_backwards,
         "starve": starve, 
         "step_limit": step_limit,
+        "fruit_limit": fruit_limit,
+        "policy": policy,
         "gamma": gamma,
         "ent_coef": ent_coef, 
         "learning_rate": learning_rate,
         "time_steps": time_steps,
         f"ending_{eval_eposodes}_avg_rewards": sum(training_rewards[-eval_eposodes:])/eval_eposodes if len(training_rewards) >= eval_eposodes else "not long enough",
-        "notes": ""
     }
 }
 
@@ -84,6 +91,20 @@ if model_type == "dqn":
         "exploration_initial_eps": exploration_initial_eps, 
         "exploration_final_eps": exploration_final_eps,
     })
+
+env_args = {
+    "width": width,
+    "height": height,
+    "starting_length": starting_length,
+    "no_backwards": no_backwards,
+    "step_limit": step_limit,
+    "starve": False,
+    "fruit_limit": False
+}
+
+info[model_name].update(evaluate_model(f"rl/{width}x{height}_models/{model_name}", trials, env_args))
+
+info[model_name].update({"notes": ""})
 
 data.update(info)
 
